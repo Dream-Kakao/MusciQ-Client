@@ -12,11 +12,17 @@ const SignUpForm = styled.form`
 `;
 
 const Button = styled.button`
-  background-color: #6930c3;
-  color: #fff;
+  background-color: #64dfdf;
+  width: 140px;
+  height: 50px;
+  color: #6930c3;
   border: none;
   padding: 10px;
   cursor: pointer;
+  border-radius: 5px;
+  &:hover {
+    background-color: #80ffdb;
+  }
 `;
 
 // logic
@@ -151,7 +157,7 @@ function SignUp() {
         errorMessage={passwordError}
         onChange={handleInputChange}
       />
-      <Button>가입하기</Button>
+      <Button>Sign Up!</Button>
     </SignUpForm>
   );
 }

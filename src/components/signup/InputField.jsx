@@ -6,16 +6,21 @@ const InputWrapper = styled.div`
 `;
 
 const Input = styled.input`
-  border: 1px solid;
+  border: 3px solid #6930c3;
+  width: 300px;
+  height: 50px;
   padding: 10px;
   margin-bottom: 20px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #fff;
 `;
 
 const ErrorMessage = styled.span`
   position: absolute;
   top: 0;
-  right: -250px;
-  font-size: 10px;
+  right: -350px;
+  font-size: 15px;
   color: #f00;
   text-align: left;
 `;

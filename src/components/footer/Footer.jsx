@@ -17,9 +17,9 @@ const Footer = () => {
         </a>
       </nav>
       <p>
-        <span>저자 : Dream Kakao</span>
+        <span>저자: Dream Kakao</span>
         <br />
-        <span>대표 메일 : musicq0503@gmail.com</span>
+        <span>대표 메일: musicq0503@gmail.com</span>
         <br />
         <br />
         <span>팀원 메일</span>

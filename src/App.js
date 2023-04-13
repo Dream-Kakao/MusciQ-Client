@@ -15,7 +15,6 @@ const App = () => {
       </div>
 
       <div>
-        <h1>Music Q!</h1>
         <BrowserRouter>
           <Routes>
             <Route
