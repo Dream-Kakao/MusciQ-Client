@@ -1,9 +1,21 @@
 import React from "react";
+import styled from "styled-components";
+
+// style
 import "./Footer.css";
+const FooterWrapper = styled.div`
+  width: 100%;
+  height: 15%;
+  bottom: 0px;
+  position: absolute;
+  border-top: 3px solid #252525;
+  padding-top: 15px;
+  font-size: 11px;
+`;
 
 const Footer = () => {
   return (
-    <footer>
+    <FooterWrapper>
       <nav>
         <a
           href="https://www.notion.so/dreamkakao/Meeting-Docs-19becce5d08747438aba0b7a4841a10e"
@@ -35,7 +47,7 @@ const Footer = () => {
         <br />
         <span>Copyright 2020. cocoder. All Rights Reserved.</span>
       </p>
-    </footer>
+    </FooterWrapper>
   );
 };
 
