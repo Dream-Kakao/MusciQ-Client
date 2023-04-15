@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -111,7 +110,7 @@ function SignUp() {
     // 중복 검사
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/v1/members/id/${id}`
+        `${process.env.REACT_APP_API_URL_V1}members/id/${id}`
       );
       const jsonRes = res.data; // json으로 바꾼 data
       console.log(jsonRes);
@@ -137,7 +136,7 @@ function SignUp() {
   const existEmail = async (email) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/v1/members/email/${email}`
+        `${process.env.REACT_APP_API_URL_V1}members/email/${email}`
       );
       const jsonRes = res.data; // json으로 바꾼 data
       console.log(jsonRes);
@@ -176,7 +175,7 @@ function SignUp() {
     // 중복 검사
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/v1/members/nickname/${id}/${nickname}`
+        `${process.env.REACT_APP_API_URL_V1}members/nickname/${id}/${nickname}`
       );
       const jsonRes = res.data; // json으로 바꾼 data
       console.log(jsonRes);
@@ -258,7 +257,7 @@ function SignUp() {
     const postData = { id, email, nickname, password };
 
     await axios
-      .post("http://localhost:8080/api/v1/members/member", postData)
+      .post(`${process.env.REACT_APP_API_URL_V1}members/member`, postData)
       .then((res) => {
         console.log(res, "회원가입 성공");
       })
