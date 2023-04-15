@@ -8,7 +8,6 @@ const LoginForm = styled.form`
   align-items: center;
   justify-content: center;
   padding: 20px;
-  border: 1px solid #ccc;
   border-radius: 5px;
 `;
 
@@ -26,7 +25,7 @@ const LoginInput = styled.input`
   border: 3px solid #6930c3;
   width: 400px;
   padding: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   border-radius: 5px;
   background-color: #000;
   color: #fff;
@@ -39,7 +38,6 @@ const LoginButton = styled.button`
   width: 140px;
   height: 50px;
   padding: 10px 20px;
-  margin-top: 10px;
   color: #6930c3;
   border: none;
   border-radius: 5px;

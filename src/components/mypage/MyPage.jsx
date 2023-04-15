@@ -28,7 +28,6 @@ const ProfileImage = styled.img`
 const Record = styled.h1`
   font-size: 35px;
   font-weight: bold;
-  margin-bottom: 10px;
   margin-top: 10px;
   color: #64dfdf;
 `;
@@ -40,26 +39,26 @@ const InfoWrapper = styled.div`
 
 const IdLabel = styled.span`
   font-size: 25px;
-  margin-right: 5px;
   color: #6930c3;
 `;
 
 const Id = styled.p`
   font-size: 20px;
-  margin-bottom: 5px;
   color: #fff;
+  border-bottom: 4px solid #6930c3;
+  margin-bottom: 20px;
 `;
 
 const EmailLabel = styled.span`
   font-size: 25px;
-  margin-bottom: 5px;
   color: #6930c3;
 `;
 
 const Email = styled.p`
   font-size: 20px;
-  margin-bottom: 5px;
   color: #fff;
+  border-bottom: 4px solid #6930c3;
+  margin-bottom: 20px;
 `;
 
 const NicknameLabel = styled.span`
@@ -70,6 +69,8 @@ const NicknameLabel = styled.span`
 const Nickname = styled.p`
   font-size: 20px;
   color: #fff;
+  border-bottom: 4px solid #6930c3;
+  margin-bottom: 20px;
 `;
 
 const ModifyButton = styled.button`
@@ -85,6 +86,7 @@ const ModifyButton = styled.button`
   border: none;
   border-radius: 5px;
   font-size: 20px;
+  font-weight: 800;
 
   &:hover {
     background-color: #80ffdb;
