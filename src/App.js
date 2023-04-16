@@ -1,5 +1,17 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import styled from "styled-components";
+
+// style
+const AppContainer = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ContentsWrapper = styled.div`
+  flex: 1;
+`;
 
 // components
 import SignUp from "./components/signup/SignUp";
@@ -12,12 +24,12 @@ import Footer from "./components/footer/Footer";
 
 const App = () => {
   return (
-    <div className="body">
+    <AppContainer>
       <div className="headerWrap">
         <Header />
       </div>
 
-      <div>
+      <ContentsWrapper>
         <BrowserRouter>
           <Routes>
             <Route
@@ -30,12 +42,12 @@ const App = () => {
             <Route path="/modify" element={<Modify></Modify>} />
           </Routes>
         </BrowserRouter>
-      </div>
+      </ContentsWrapper>
 
-      <div>
+      <div className="footerWrap">
         <Footer />
       </div>
-    </div>
+    </AppContainer>
   );
 };
 
