@@ -11,17 +11,17 @@ import RoomListContainer from "./components/room/RoomListContainer";
 
 const App = () => {
   return (
-    <div className="body" style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div>
       <div className="headerWrap">
         <Header />
       </div>
 
-      <div style={{ flexGrow: "1", paddingTop: "100", paddingBottom: "100",  }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <BrowserRouter>
           <Routes>
             <Route path="/openvidu" element={<OpenviduDefault></OpenviduDefault>} />
             <Route path="signup" element={<SignUp></SignUp>} />
-            <Route path="/roomlist" element={<RoomListContainer/>}/>
+            <Route path="/roomlist" element={<RoomListContainer />} />
           </Routes>
         </BrowserRouter>
       </div>
