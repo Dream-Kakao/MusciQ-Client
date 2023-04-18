@@ -21,6 +21,8 @@ import Modify from "./components/modify/Modify";
 import OpenviduDefault from "./components/webrtc/OpenviduDefault";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
+import RoomListContainer from "./components/room/RoomListContainer";
+
 
 const App = () => {
   return (
@@ -28,20 +30,20 @@ const App = () => {
       <div className="headerWrap">
         <Header />
       </div>
-
+      
       <ContentsWrapper>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <BrowserRouter>
           <Routes>
-            <Route
-              path="/openvidu"
-              element={<OpenviduDefault></OpenviduDefault>}
-            />
+            <Route path="/openvidu" element={<OpenviduDefault></OpenviduDefault>} />
+            <Route path="/roomlist" element={<RoomListContainer />} />
             <Route path="/signup" element={<SignUp></SignUp>} />
             <Route path="/login" element={<Login></Login>} />
             <Route path="/mypage" element={<MyPage></MyPage>} />
             <Route path="/modify" element={<Modify></Modify>} />
           </Routes>
         </BrowserRouter>
+      </div>
       </ContentsWrapper>
 
       <div className="footerWrap">
