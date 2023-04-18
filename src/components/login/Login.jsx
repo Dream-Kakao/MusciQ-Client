@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router";
 
 // style
 const LoginForm = styled.form`
@@ -55,17 +56,22 @@ const LoginButton = styled.button`
   }
 `;
 
-// logic
-function Login() {
+const Login = () => {
+  const navigate = useNavigate();
+
+  const onClickGotoSignUp = () => {
+    navigate('/signup')
+  }
+  // Enter 를 입력하면 LoginButton 을 누르는 것과 같이 만들기
   return (
     <LoginForm>
-      <TextButton>회원가입 하러가기!</TextButton>
-      <TextButton>비밀번호를 잊어버렸어요!</TextButton>
+      <TextButton onClick={onClickGotoSignUp}>회원가입 하러가기!</TextButton>
+      {/* <TextButton>비밀번호를 잊어버렸어요!</TextButton> */}
       <LoginInput id="id" type="text" placeholder="ID" />
       <LoginInput id="password" type="password" placeholder="Password" />
       <LoginButton>로그인</LoginButton>
     </LoginForm>
-  );
+  )
 }
 
 export default Login;
