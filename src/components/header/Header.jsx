@@ -4,6 +4,9 @@ import logo from "../../img/logo.png";
 
 // style
 const LogoWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 230px;
   flex: 0.4;
   justify-content: center;
   align-items: center;
