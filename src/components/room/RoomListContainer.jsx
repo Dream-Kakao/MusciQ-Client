@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import RoomList from './RoomList';
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   background-color: black;
@@ -77,6 +78,7 @@ const PageContainer = styled.div`
 `;
 
 const RoomListContainer = () => {
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
 
@@ -86,7 +88,7 @@ const RoomListContainer = () => {
   const [previous, setPrevious] = useState();
 
   useEffect(() => {
-    const eventSource = new EventSource(`http://localhost:80/api/v1/rooms/all?page=${page}`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`);
     eventSource.onmessage = (event) => {
       const res = JSON.parse(event.data);
       
@@ -107,12 +109,25 @@ const RoomListContainer = () => {
 
   // 로그아웃 버튼 클릭 이벤트
   const onClickLogout = () => {
-    alert("쿠키 부,,,부셔버렸~")
+    fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`)
+    .then((res) => res.json())
+    .then((data) => {
+      const success = data.success;
+      if(success){
+        alert("로그 아웃 성공!")
+        navigate('/login');
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      alert("비정상 적인 요청 경로로 입장했습니다.")
+      navigate('/login');
+    })
   }
 
   // 방 생성 버튼 클릭 이벤트
   const onClickCreateRoom = () => {
-    alert("방 생성 페이지 만들어줘 이이이잉~~~")
+    alert("방 생성 페이지 만들어줘~")
   }
 
   // 다음 페이지 버튼 클릭 이벤트
@@ -120,7 +135,7 @@ const RoomListContainer = () => {
     if(next === true){
       setPage(page + 1);
     } else{
-      alert("마지막 처럼, 마마마 마지막처럼~")
+      alert("마지막 페이지 입니다.")
     }
   }
 
@@ -129,7 +144,7 @@ const RoomListContainer = () => {
     if(previous === true){
       setPage(page - 1);
     } else{
-      alert("처음처럼~, 그날 참이슬 같던 너~")
+      alert("첫번째 페이지 입니다.")
     }
   }
 
@@ -144,7 +159,7 @@ const RoomListContainer = () => {
       </PageContainer>
       <ButtonContainer className="button-container">
         <Button className="logout-button" onClick={onClickLogout}>Logout</Button>
-        <CenteredText className="centered-text">정채윤 바보 멍청이^0^</CenteredText>
+        <CenteredText className="centered-text"></CenteredText>
         <Button className="create-room-button" onClick={onClickCreateRoom}>Create Room</Button>
       </ButtonContainer>
     </Container>
