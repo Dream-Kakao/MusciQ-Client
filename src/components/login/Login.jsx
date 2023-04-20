@@ -59,25 +59,25 @@ const LoginButton = styled.button`
 const Login = () => {
   const navigate = useNavigate();
 
-useEffect(() => {
-  fetch(`${process.env.REACT_APP_API_URL_V1}members/token`, {
-    method: 'GET',
-    credentials: 'include'
-  })
-  .then((res) => {
-    return res.json();
-  })
-  .then((res) => {
-    if (res.success) {
-      navigate("/roomlist")
-    } else {
-      console.log(res.error)
-    }
-  })
-  .catch(error => {
-    console.error(error);
-  });
-}, []);
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_URL_V1}members/token`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        if (res.success) {
+          navigate("/roomlist")
+        } else {
+          console.log(res.error)
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
 
   const [inputId, setInputId] = useState();
   const [inputPw, setInputPw] = useState();
@@ -116,13 +116,17 @@ useEffect(() => {
         })
           .then((res) => res.json())
           .then(res => {
-            if(res.success){
+            if (res.success) {
+              const now = new Date();
+              const expirationDate = new Date(now.getTime() + 86400000);
+              localStorage.setItem("Auth", res.data)
+              localStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
               navigate('/roomlist')
             } else {
-              if(res.error === 'NOT_EXIST_ID'){
+              if (res.error === 'NOT_EXIST_ID') {
                 alert("존재하지 않는 ID 입니다.")
               }
-              if(res.error === 'NOT_EXIST_PW'){
+              if (res.error === 'NOT_EXIST_PW') {
                 alert("비밀번호가 틀렸습니다.")
               }
             }
@@ -137,13 +141,20 @@ useEffect(() => {
       alert("아이디는 알파벳과 숫자를 반드시 포함한 6~20자리 입니다.")
     }
   }
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onClickLogin();
+    }
+  }
+
   // Enter 를 입력하면 LoginButton 을 누르는 것과 같이 만들기
   return (
     <LoginForm>
       <TextButton onClick={onClickGotoSignUp}>회원가입 하러가기!</TextButton>
       {/* <TextButton>비밀번호를 잊어버렸어요!</TextButton> */}
-      <LoginInput id="id" type="text" placeholder="ID" onChange={onChangeIdInput} />
-      <LoginInput id="password" type="password" placeholder="Password" onChange={onChangePasswordInput} />
+      <LoginInput id="id" type="text" placeholder="ID" onChange={onChangeIdInput} onKeyDown={onKeyDown} />
+      <LoginInput id="password" type="password" placeholder="Password" onChange={onChangePasswordInput} onKeyDown={onKeyDown} />
       <LoginButton onClick={onClickLogin}>로그인</LoginButton>
     </LoginForm>
   )
