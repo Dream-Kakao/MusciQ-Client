@@ -38,6 +38,21 @@ const SignupButton = styled.button`
 
 // !logic
 function SignUp() {
+  useEffect(() => {
+    const expiration = localStorage.getItem("AuthExpiration");
+    const currentTime = new Date().getTime();
+
+    if (expiration && currentTime > parseInt("AuthExpiration")) {
+      localStorage.removeItem("Auth");
+      localStorage.removeItem("AuthExpiration");
+    } 
+    const accessToken = localStorage.getItem("Auth")
+    console.log(accessToken)
+    if(accessToken != null){
+      window.location.replace("/login")
+    }
+  }, [])
+
   // form에 입력된 데이터들
   const [formData, setFormData] = useState({
     id: "",
@@ -72,6 +87,7 @@ function SignUp() {
 
   // formData에 입력 값들이 모두 존재하면 ok 값을 true로 변경
   useEffect(() => {
+    
     if (
       formData.id &&
       formData.email &&

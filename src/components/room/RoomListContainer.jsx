@@ -93,7 +93,7 @@ const RoomListContainer = () => {
     });
     eventSource.onmessage = (event) => {
       const res = JSON.parse(event.data);
-      
+
       if (res.statusCode === 'OK') {
         setRooms(res.body.data)
         setNext(res.body.next)
@@ -115,19 +115,21 @@ const RoomListContainer = () => {
       method: "GET",
       credentials: 'include'
     })
-    .then((res) => res.json())
-    .then((data) => {
-      const success = data.success;
-      if(success){
-        alert("로그 아웃 성공!")
+      .then((res) => res.json())
+      .then((data) => {
+        const success = data.success;
+        if (success) {
+          localStorage.removeItem("Auth");
+          localStorage.removeItem("AuthExpiration");
+          alert("로그 아웃 성공!")
+          navigate('/login');
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        alert("비정상 적인 요청 경로로 입장했습니다.")
         navigate('/login');
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-      alert("비정상 적인 요청 경로로 입장했습니다.")
-      navigate('/login');
-    })
+      })
   }
 
   // 방 생성 버튼 클릭 이벤트
@@ -137,18 +139,18 @@ const RoomListContainer = () => {
 
   // 다음 페이지 버튼 클릭 이벤트
   const onClickNext = async (next) => {
-    if(next === true){
+    if (next === true) {
       setPage(page + 1);
-    } else{
+    } else {
       alert("마지막 페이지 입니다.")
     }
   }
 
   // 이전 페이지 버튼 클릭 이벤트
   const onClickPrevious = async (previous) => {
-    if(previous === true){
+    if (previous === true) {
       setPage(page - 1);
-    } else{
+    } else {
       alert("첫번째 페이지 입니다.")
     }
   }
@@ -156,7 +158,7 @@ const RoomListContainer = () => {
   return (
     <Container className="container">
       <RoomListWrapper className="room-list-wrapper">
-        <RoomList rooms={rooms}/>
+        <RoomList rooms={rooms} />
       </RoomListWrapper>
       <PageContainer className="page-container">
         <ArrowButton className="arrow-button left-arrow" onClick={() => onClickPrevious(previous)}>◀</ArrowButton>
