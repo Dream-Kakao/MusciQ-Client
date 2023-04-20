@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -35,7 +36,7 @@ const SignupButton = styled.button`
   }
 `;
 
-// logic
+// !logic
 function SignUp() {
   // form에 입력된 데이터들
   const [formData, setFormData] = useState({
@@ -79,6 +80,8 @@ function SignUp() {
       formData.passwordConfirm
     ) {
       setOk(true);
+    } else {
+      setOk(false);
     }
   }, [formData]);
 
@@ -90,7 +93,9 @@ function SignUp() {
     });
   };
 
-  // method
+  const navigate = useNavigate();
+
+  // !method
   // id 유효성 검사, 중복 검사
   const checkId = async (id) => {
     // 유효성 검사
@@ -107,53 +112,68 @@ function SignUp() {
       setIdErrorMessage("");
     }
 
-    // 중복 검사
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL_V1}members/id/${id}`
-      );
-      const jsonRes = res.data; // json으로 바꾼 data
-      console.log(jsonRes);
-
-      if (jsonRes.success) {
+    // 중복검사
+    await axios
+      .get(`${process.env.REACT_APP_API_URL_V1}members/id/${id}`)
+      .then((res) => {
         // id 중복되지 않음
+        const jsonRes = res.data;
+
+        console.log(jsonRes);
+        console.log(jsonRes.success);
+
         setIdError(false);
         setIdOkMessage("사용 가능 😆");
-        console.log("id 사용 가능");
-      } else {
+      })
+      .catch((err) => {
         // id 중복됨
+        const jsonRes = err.response.data;
+
+        console.log(jsonRes);
+        console.log(jsonRes.error);
+
         setIdError(true);
         setIdErrorMessage("중복된 ID 입니다.");
-      }
-    } catch (err) {
-      // api 호출 실패
-      console.error(err);
-    }
+      });
   };
 
-  // email 중복 검사
-  // email 유효성은 input 자체에서 해줌
-  const existEmail = async (email) => {
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL_V1}members/email/${email}`
-      );
-      const jsonRes = res.data; // json으로 바꾼 data
-      console.log(jsonRes);
+  // email 유효성 검사, 중복 검사
+  const checkEmail = async (email) => {
+    // 유효성 검사
+    const emailRegex = /^(?:\w+\.?)*\w+@(?:\w+\.)+\w+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError(true);
+      setEmailErrorMessage("이메일 형식이 올바르지 않습니다!");
 
-      if (jsonRes.success) {
+      return;
+    } else {
+      setEmailError(false);
+      setEmailErrorMessage("");
+    }
+
+    // 중복 검사
+    await axios
+      .get(`${process.env.REACT_APP_API_URL_V1}members/email/${email}`)
+      .then((res) => {
         // email 중복되지 않음
+        const jsonRes = res.data;
+
+        console.log(jsonRes);
+        console.log(jsonRes.success);
+
         setEmailError(false);
         setEmailOkMessage("사용 가능 😆");
-        console.log("email 사용 가능");
-      } else {
+      })
+      .catch((err) => {
         // email 중복됨
+        const jsonRes = err.response.data;
+
+        console.log(jsonRes);
+        console.log(jsonRes.error);
+
         setEmailError(true);
-        setEmailErrorMessage("중복된 email 입니다.");
-      }
-    } catch (err) {
-      console.error(err); // api 호출 실패
-    }
+        setEmailErrorMessage("중복된 Email 입니다.");
+      });
   };
 
   // nickname 유효성 검사, 중복 검사
@@ -173,26 +193,30 @@ function SignUp() {
     }
 
     // 중복 검사
-    try {
-      const res = await axios.get(
+    await axios
+      .get(
         `${process.env.REACT_APP_API_URL_V1}members/nickname/${id}/${nickname}`
-      );
-      const jsonRes = res.data; // json으로 바꾼 data
-      console.log(jsonRes);
+      )
+      .then((res) => {
+        // 닉네임 중복되지 않음
+        const jsonRes = res.data;
 
-      if (jsonRes.success) {
-        // nickname 중복되지 않음
+        console.log(jsonRes);
+        console.log(jsonRes.success);
+
         setNicknameError(false);
         setNicknameOkMessage("사용 가능 😆");
-        console.log("nickname 사용 가능");
-      } else {
-        // nickname 중복됨
+      })
+      .catch((err) => {
+        // 닉네임 중복됨
+        const jsonRes = err.response.data;
+
+        console.log(jsonRes);
+        console.log(jsonRes.error);
+
         setNicknameError(true);
         setNicknameErrorMessage("중복된 nickname 입니다.");
-      }
-    } catch (err) {
-      console.error(err); // api 호출 실패
-    }
+      });
   };
 
   // password 유효성 검사
@@ -203,9 +227,13 @@ function SignUp() {
       setPasswordStateErrorMessage(
         "숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요!"
       );
+
+      return false; // 비밀번호 유효성 X
     } else {
       setPasswordStateError(false);
       setPasswordStateErrorMessage("");
+
+      return true; // 비밀번호 유효성 O
     }
   };
 
@@ -214,9 +242,13 @@ function SignUp() {
     if (password !== passwordConfirm) {
       setPasswordError(true);
       setPasswordErrorMessage("비밀번호가 일치하지 않습니다.");
+
+      return false; // 비밀번호 다름
     } else {
       setPasswordError(false);
       setPasswordErrorMessage("");
+
+      return true; // 비밀번호 같음
     }
   };
 
@@ -234,20 +266,17 @@ function SignUp() {
 
     const { id, email, nickname, password, passwordConfirm } = joinData;
 
-    validatePassword(password);
-    equalPassword(password, passwordConfirm);
-
     if (
       !idError &&
       !emailError &&
       !nicknameError &&
-      !passwordStateError &&
-      !passwordError
+      validatePassword(password) &&
+      equalPassword(password, passwordConfirm)
     ) {
       handleDataPost(joinData);
-      alert("회원가입 성공! 🎉");
     } else {
       console.log("id, email, nickname, password 중에 문제있음");
+      alert("회원가입에 실패하였습니다. 다시 확인해 주세요.");
     }
   };
 
@@ -260,10 +289,13 @@ function SignUp() {
       .post(`${process.env.REACT_APP_API_URL_V1}members/member`, postData)
       .then((res) => {
         console.log(res, "회원가입 성공");
+        alert("회원가입 성공! 🎉");
+
+        navigate("/login");
       })
       .catch((err) => {
         console.error(err);
-        setRegisterError("회원가입에 실패하였습니다. 다시 시도해주세요.");
+        alert("회원가입에 실패하였습니다. 다시 확인해 주세요.");
       });
   };
 
@@ -285,13 +317,13 @@ function SignUp() {
       <InputWithButton
         id="email"
         value={formData.email}
-        type="email"
+        type="text"
         placeholder="E-mail"
         error={emailError}
         errorMessage={emailErrorMessage}
         okMessage={emailOkMessage}
         onChange={handleInputChange}
-        onClick={() => existEmail(formData.email)}
+        onClick={() => checkEmail(formData.email)}
       />
       <InputWithButton
         id="nickname"
