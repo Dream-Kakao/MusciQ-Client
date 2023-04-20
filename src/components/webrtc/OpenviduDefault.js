@@ -2,10 +2,13 @@ import { OpenVidu } from "openvidu-browser";
 
 import axios from "axios";
 import React, { Component } from "react";
-import "./Openvidu.css";
-import UserVideoComponent from "./UserVideoComponent";
 import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
+
+import "./Openvidu.css";
+
+import UserVideoComponent from "./UserVideoComponent";
+import GameResultDialog from "./GameResultDialog";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://demos.openvidu.io/";
@@ -457,6 +460,7 @@ class OpenviduDefault extends Component {
               >
                 <ReadyButton>게임준비</ReadyButton>
                 <ExitButton>나가기</ExitButton>
+                <GameResultDialog />
               </div>
             </AllofButtons>
           </div>
