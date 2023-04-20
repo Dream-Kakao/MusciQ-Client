@@ -88,7 +88,9 @@ const RoomListContainer = () => {
   const [previous, setPrevious] = useState();
 
   useEffect(() => {
-    const eventSource = new EventSource(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`, {
+      withCredentials: true
+    });
     eventSource.onmessage = (event) => {
       const res = JSON.parse(event.data);
       
@@ -109,7 +111,10 @@ const RoomListContainer = () => {
 
   // 로그아웃 버튼 클릭 이벤트
   const onClickLogout = () => {
-    fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`)
+    fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
+      method: "GET",
+      credentials: 'include'
+    })
     .then((res) => res.json())
     .then((data) => {
       const success = data.success;
