@@ -13,9 +13,17 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import axios from "axios";
 
-const StyledBox = styled(Box)`
+const StyledMenuItem = styled(MenuItem)`
   && {
-    min-width: 120px;
+    color: #64dfdf;
+    background-color: #252525;
+    &:hover {
+      background-color: #64dfdf;
+      color: #6930c3;
+    }
+    &:focus {
+      outline: 2px solid #64dfdf;
+    }
   }
 `;
 
@@ -23,6 +31,22 @@ const StyledFormControl = styled(FormControl)`
   && {
     width: 100%;
     margin-top: 16px;
+
+    /* outline 색상 변경 */
+    &:not(.Mui-focused) .MuiOutlinedInput-notchedOutline {
+      border-color: #64dfdf;
+    }
+    &:not(.Mui-focused) .MuiInputLabel-outlined {
+      color: #6930c3;
+    }
+    /* 포커싱됬을 때 outline 색상 변경 */
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: #6930c3;
+    }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: orange;
+    }
+  }
   }
 `;
 
@@ -41,14 +65,6 @@ const StyledSelect = styled(Select)`
 
   label {
     color: #6930c3;
-  }
-`;
-
-const StyledInputLabel = styled(InputLabel)`
-  && {
-    color: #6930c3;
-    font-size: 18px;
-    font-weight: bold;
   }
 `;
 
@@ -224,9 +240,9 @@ export default function FormDialog() {
             value={roomName}
             onChange={handleRoomNameChange}
           />
-          <StyledBox sx={{ minWidth: 120 }}>
+          <Box sx={{ minWidth: 120 }}>
             <StyledFormControl fullWidth>
-              <StyledInputLabel id="gameType">게임장르</StyledInputLabel>
+              <InputLabel id="gameType">게임장르</InputLabel>
               <StyledSelect
                 labelId="gameType"
                 id="gameSelect"
@@ -234,10 +250,10 @@ export default function FormDialog() {
                 label="게임종류"
                 onChange={handleGameTypeChange}
               >
-                <MenuItem value={"낭독퀴즈"}>낭독퀴즈</MenuItem>
+                <StyledMenuItem value={"낭독퀴즈"}>낭독퀴즈</StyledMenuItem>
               </StyledSelect>
             </StyledFormControl>
-          </StyledBox>
+          </Box>
         </DialogContent>
         <DialogActions>
           <DialogCreateButton onClick={handleCreate}>생성</DialogCreateButton>
