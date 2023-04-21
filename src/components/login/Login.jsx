@@ -119,6 +119,7 @@ const Login = () => {
             if (res.success) {
               const now = new Date();
               const expirationDate = new Date(now.getTime() + 86400000);
+              localStorage.setItem("UserID", inputId)
               localStorage.setItem("Auth", res.data)
               localStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
               navigate('/roomlist')
