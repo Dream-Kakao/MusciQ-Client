@@ -122,13 +122,19 @@ function Modify() {
   // DB에 저장할 이미지 정보
   const [changeInfo, setChangeInfo] = useState({
     nickname: '',
-    memberImage: ''
+    memberImage: {
+      uuid: '',
+      path: '',
+      profile_img: ''
+    }
   })
+  const [nickname, setNickname] = useState();
+  const [path, setPath] = useState();
+  const [uuid, setUuid] = useState();
+  const [profile_img, setProfile_Img] = useState();
 
   // 현재 이미지
   const [imageFile, setImageFile] = useState();
-
-  const [uploadSuccess, setUploadSuccess] = useState(false)
 
   useEffect(() => {
     const userId = localStorage.getItem("UserID")
@@ -141,15 +147,19 @@ function Modify() {
         return res.json()
       })
       .then((res) => {
-        setChangeInfo({
-          ...changeInfo,
-          nickname: res.data.nickname,
-          memberImage: {
-            uuid: res.data.profile_img.uuid,
-            path: res.data.profile_img.path,
-            profile_img: res.data.profile_img.profile_img
-          }
-        })
+        // setChangeInfo({
+        //   ...changeInfo,
+        //   nickname: res.data.nickname,
+        //   memberImage: {
+        //     uuid: res.data.profile_img.uuid,
+        //     path: res.data.profile_img.path,
+        //     profile_img: res.data.profile_img.profile_img
+        //   }
+        // })
+        setNickname(res.data.nickname)
+        setPath(res.data.profile_img.path)
+        setUuid(res.data.profile_img.uuid)
+        setProfile_Img(res.data.profile_img.profile_img)
         setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img)
       })
       .catch((error) => {
@@ -158,7 +168,6 @@ function Modify() {
       })
   }, [])
 
-  console.log(changeInfo)
 
   // 현재 프로필 이미지 미리보기 및 업로드할 이미지를 미리보기 한다.
   const handleImageUpload = (e) => {
@@ -167,29 +176,28 @@ function Modify() {
       setImageFile(URL.createObjectURL(file));
       setPostImage(file);
     }
-    
   }
-  
+
   // 닉네임 Input 변경하기
   const onChangeNickNameInput = (e) => {
-    setChangeInfo({
-      ...changeInfo,
-      nickname: e.target.value
-    })
+    // setChangeInfo({
+    //   ...changeInfo,
+    //   nickname: e.target.value
+    // })
+    setNickname(e.target.value)
   }
 
   // 이미지 업로드 요청
-  const uploadS3 = async (file) => {
-    console.log(file)
+  const uploadS3 = () => {
     console.log(postImage)
     const url = `${process.env.REACT_APP_API_URL_V1}members/member/upload/S3`;
     const formData = new FormData();
 
-    if (file) {
-      formData.append('uploadFile', file);
+    if (postImage) {
+      formData.append('uploadFile', postImage);
     }
 
-    await fetch(url, {
+    fetch(url, {
       method: 'POST',
       body: formData,
       credentials: 'include'
@@ -198,22 +206,21 @@ function Modify() {
         return res.json()
       })
       .then((res) => {
-        console.log(res)
-        setChangeInfo({
-          ...changeInfo,
-          memberImage: {
-            uuid: res.uuid,
-            path: res.path,
-            profile_img: res.profile_img
-          }
-          
-        })
-        console.log(changeInfo)
-        setUploadSuccess(true)
+        // setChangeInfo({
+        //   ...changeInfo,
+        //   memberImage: {
+        //     uuid: res.uuid,
+        //     path: res.path,
+        //     profile_img: res.profile_img
+        //   }
+        // })
+        setPath(res.path)
+        setUuid(res.uuid)
+        setProfile_Img(res.profile_img)
+        
       })
       .catch((error) => {
-        console.log(error)
-        //alert("현재 이미지 업로드가 불가능합니다, 죄송합니다.")
+        alert("현재 이미지 업로드가 불가능합니다, 죄송합니다.")
         //navigate('/roomlist')
       })
   }
@@ -228,7 +235,14 @@ function Modify() {
         'Content-Type': 'application/json'
       },
       credentials: 'include',
-      body: JSON.stringify(changeInfo),
+      body: JSON.stringify({
+        nickname: nickname,
+        memberImage:{
+          uuid: uuid,
+          path: path,
+          profile_img: profile_img
+        }
+      }),
 
     })
       .then((res) => {
@@ -241,29 +255,25 @@ function Modify() {
 
   // 회원정보 수정
   const onClickModifyButton = () => {
-    if(window.confirm("입력하신 정보로 회원 정보를 수정합니다.")){
-      if(postImage != null){
-        uploadS3(postImage);
-  
-        if(uploadSuccess) {
-          changeMemberInfo();
-          alert("회원 정보 수정 완료.");
-        } else{
-          alert("현재 회원 정보 수정이 불가능 합니다.");
-        }
+    if (window.confirm("입력하신 정보로 회원 정보를 수정합니다.")) {
+      if (postImage != null) {
+        uploadS3()
+        changeMemberInfo()
+        
       } else {
+        // 이미지 업로드 하지 않은 경우에 닉네임만 수정 요청하도록 지정
         changeMemberInfo();
         alert("회원 정보 수정 완료.");
       }
     }
   }
-
+  
   return (
     <ModifyContainer>
       <InfoWrapper>
         <ProfileImageWrapper>
           <label htmlFor="profileImage">
-            <ProfileImage src={imageFile} alt="Profile Picture" />
+            <ProfileImage src={imageFile} alt="Profile Picture"/>
             <input
               id="profileImage"
               type="file"
@@ -273,7 +283,7 @@ function Modify() {
             />
           </label>
         </ProfileImageWrapper>
-        <ModifyInput1 id="nickname" type="text" value={changeInfo.nickname} onChange={onChangeNickNameInput} />
+        <ModifyInput1 id="nickname" type="text" value={nickname} onChange={onChangeNickNameInput} />
 
         <ButtonWrapper1>
           <ModifyButton1 onClick={onClickModifyButton}>회원정보 수정</ModifyButton1>
