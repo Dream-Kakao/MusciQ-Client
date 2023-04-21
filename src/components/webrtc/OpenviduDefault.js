@@ -6,7 +6,7 @@ import "./Openvidu.css";
 import UserVideoComponent from "./UserVideoComponent";
 import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
-
+import { Button, Box } from "@material-ui/core";
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://demos.openvidu.io/";
 
@@ -51,26 +51,41 @@ const AllofButtons = styled.div`
   height: 30%;
 `;
 
-const ExitButton = styled.button`
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  background: red;
+const ExitButton = styled(Button)`
+  && {
+    width: 100%;
+    height: auto;
+    border: 2px solid #64dfdf;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #6930c3;
+  }
 `;
 
-const ReadyButton = styled.button`
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  background: green;
+const ReadyButton = styled(Button)`
+  && {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    background: #6930c3;
+    font-weight: bold;
+    font-size: 13px;
+    color: #64dfdf;
+  }
 `;
 
-const ShowParticipant = styled.div`
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-  background: blue;
-  text-align: center;
+const ShowParticipant = styled(Box)`
+  && {
+    width: 100%;
+    height: auto;
+    border: 2px solid #6930c3;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+    color: #64dfdf;
+  }
 `;
 
 class OpenviduDefault extends Component {
@@ -79,24 +94,14 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: "SessionA",
+      mySessionId: "SessionC",
       myUserName: "Participant" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
       subscribers: [],
-      options: [
-        { label: "Grapes 🍇", value: "grapes" },
-        { label: "Mango 🥭", value: "mango" },
-        { label: "Strawberry 🍓", value: "strawberry" },
-        { label: "Watermelon 🍉", value: "watermelon" },
-        { label: "Pear 🍐", value: "pear", disabled: true },
-        { label: "Apple 🍎", value: "apple" },
-        { label: "Tangerine 🍊", value: "tangerine" },
-        { label: "Pineapple 🍍", value: "pineapple" },
-        { label: "Peach 🍑", value: "peach" },
-      ],
-      selected: [],
+      songs: [], // axios로 노래관련된 것들을 받아올 배열
+      songSelected: [], // MultiSet에서 고른 노래들을 담을 배열
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -106,14 +111,29 @@ class OpenviduDefault extends Component {
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
     this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
+    this.setSongSelected = this.setSongSelected.bind(this);
   }
-
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL_V1}musics/all`)
+      .then((response) => {
+        this.setState({ songs: response.data });
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.onbeforeunload);
+  }
+
+  // 노래에 관련된 useState
+  setSongSelected(songSelected) {
+    this.setState({ songSelected });
   }
 
   onbeforeunload(event) {
@@ -312,8 +332,18 @@ class OpenviduDefault extends Component {
   }
 
   render() {
+    console.log(this.state.songSelected);
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
+
+    // 음악을 고르기 위한 옵션 - value는 "musicId_videoId처럼 만들어지게 됨."
+    const options = this.state.songs.map((song) => ({
+      label: `${song.musicTitle} - ${song.singer}`,
+      value: JSON.stringify({
+        musicId: song.musicId,
+        videoId: song.videoId,
+      }),
+    }));
 
     return (
       //   join session 하는 페이지. 추 후에 지워야 됨.
@@ -366,8 +396,8 @@ class OpenviduDefault extends Component {
         ) : null}
 
         {/* 세션을 보여주는 페이지
-            this.state.session이 없다면 페이지를 보여주면 안된다.
-          */}
+          this.state.session이 없다면 페이지를 보여주면 안된다.
+        */}
         {this.state.session !== undefined ? (
           <div id="session">
             {/* body 내 헤더 부분. 고정 쌉가능 */}
@@ -390,19 +420,19 @@ class OpenviduDefault extends Component {
             </div>
 
             {/* {this.state.mainStreamManager !== undefined ? (
-                <div id="main-video" className="col-md-6">
-                  <UserVideoComponent
-                    streamManager={this.state.mainStreamManager}
-                  />
-                </div>
-              ) : null} */}
+              <div id="main-video" className="col-md-6">
+                <UserVideoComponent
+                  streamManager={this.state.mainStreamManager}
+                />
+              </div>
+            ) : null} */}
 
             {/* 
-                문제가 생기는 부분.
-  
-                publisher는 1 명이고, subscriber는 n 명인데
-                왜 다 publisher로 잡히는걸까?
-              */}
+              문제가 생기는 부분.
+
+              publisher는 1 명이고, subscriber는 n 명인데
+              왜 다 publisher로 잡히는걸까?
+            */}
 
             {/* body 내 body~footer 부분. */}
             <HeaderStyle id="video-container">
@@ -438,11 +468,12 @@ class OpenviduDefault extends Component {
                   gap: "10px",
                 }}
               >
+                <pre>{JSON.stringify(this.state.songSelected)}</pre>
                 <MultiSelect
-                  options={this.state.options}
-                  value={this.state.selected}
-                  onChange={(selected) => this.setState({ selected })}
-                  labelledBy={"Selected"}
+                  options={options}
+                  value={this.state.songSelected}
+                  onChange={this.setSongSelected}
+                  labelledBy={"노래를 골라주세요."}
                   isCreatable={true}
                 />
                 <ShowParticipant>0/5</ShowParticipant>
@@ -455,8 +486,10 @@ class OpenviduDefault extends Component {
                   gap: "10px",
                 }}
               >
-                <ReadyButton>게임준비</ReadyButton>
-                <ExitButton>나가기</ExitButton>
+                {this.state.publisher !== undefined ? (
+                  <ReadyButton variant="contained">게임시작</ReadyButton>
+                ) : null}
+                <ExitButton variant="outlined">나가기</ExitButton>
               </div>
             </AllofButtons>
           </div>
