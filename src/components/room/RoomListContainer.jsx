@@ -90,18 +90,20 @@ const RoomListContainer = () => {
 
   useEffect(() => {
     const eventSource = new EventSource(
-      `${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`, {
-      withCredentials: true
-    }
+      `${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`,
+      {
+        withCredentials: true,
+      }
     );
     eventSource.onmessage = (event) => {
       const res = JSON.parse(event.data);
 
-      if (res.statusCode === 'OK') {
-        setRooms(res.body.data)
-        setNext(res.body.next)
-        setCurPage(res.body.number)
-        setPrevious(res.body.previous)
+      if (res.statusCode === "OK") {
+        console.log(res.body.data);
+        setRooms(res.body.data);
+        setNext(res.body.next);
+        setCurPage(res.body.number);
+        setPrevious(res.body.previous);
       } else {
         // 교통사고 처리해야됨
         console.error(`Error: ${event.status}`);
@@ -116,7 +118,7 @@ const RoomListContainer = () => {
   const onClickLogout = () => {
     fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
       method: "GET",
-      credentials: 'include'
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
@@ -124,28 +126,28 @@ const RoomListContainer = () => {
         if (success) {
           localStorage.removeItem("Auth");
           localStorage.removeItem("AuthExpiration");
-          alert("로그 아웃 성공!")
-          navigate('/login');
+          alert("로그 아웃 성공!");
+          navigate("/login");
         }
       })
       .catch((err) => {
-        console.log(err)
-        alert("비정상 적인 요청 경로로 입장했습니다.")
-        navigate('/login');
-      })
-  }
+        console.log(err);
+        alert("비정상 적인 요청 경로로 입장했습니다.");
+        navigate("/login");
+      });
+  };
 
   // 방 생성 버튼 클릭 이벤트
   const onClickCreateRoom = () => {
-    alert("방 생성 페이지 만들어줘~")
-  }
+    alert("방 생성 페이지 만들어줘~");
+  };
 
   // 다음 페이지 버튼 클릭 이벤트
   const onClickNext = async (next) => {
     if (next === true) {
       setPage(page + 1);
     } else {
-      alert("마지막 페이지 입니다.")
+      alert("마지막 페이지 입니다.");
     }
   };
 
@@ -154,7 +156,7 @@ const RoomListContainer = () => {
     if (previous === true) {
       setPage(page - 1);
     } else {
-      alert("첫번째 페이지 입니다.")
+      alert("첫번째 페이지 입니다.");
     }
   };
 

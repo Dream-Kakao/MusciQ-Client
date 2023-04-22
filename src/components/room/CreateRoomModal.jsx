@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const StyledMenuItem = styled(MenuItem)`
   && {
@@ -176,12 +177,16 @@ export default function FormDialog() {
   const [gameType, setGameType] = useState("낭독퀴즈"); // 게임 종류를 관리하는 state 변수
   const [sessionId, setSessionId] = useState("");
 
+  const navigate = useNavigate();
+
   const handleClickOpen = async () => {
     setOpen(true); // 모달창 먼저 열기
 
     try {
       const sessionId = await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/create`
+        `${process.env.REACT_APP_API_URL_V1}rooms/create`,
+        {},
+        { withCredentials: true }
       );
       console.log(sessionId);
       console.log(sessionId.data);
@@ -211,7 +216,8 @@ export default function FormDialog() {
       };
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL_V1}rooms/create/${sessionId}`,
-        requestBody
+        requestBody,
+        { withCredentials: true }
       );
       console.log(response);
       console.log(response.data);
@@ -219,7 +225,20 @@ export default function FormDialog() {
     } catch (error) {
       console.log(error);
     }
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL_V1}rooms/enter/${sessionId}`,
+        {},
+        { withCredentials: true }
+      );
+      navigate("/openvidu");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const isRoomNameEmpty = roomName === "";
 
   return (
     <div>
@@ -256,7 +275,9 @@ export default function FormDialog() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <DialogCreateButton onClick={handleCreate}>생성</DialogCreateButton>
+          <DialogCreateButton onClick={handleCreate} disabled={isRoomNameEmpty}>
+            생성
+          </DialogCreateButton>
           <DialogCancelButton onClick={handleClose}>취소</DialogCancelButton>
         </DialogActions>
       </CustomDialog>
