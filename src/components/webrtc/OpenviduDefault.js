@@ -8,7 +8,7 @@ import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
 import { Button, Box } from "@material-ui/core";
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://demos.openvidu.io/";
+  process.env.NODE_ENV === "production" ? "" : "http://localhost/api/v1/";
 
 // 화면 중 사람들 얼굴 보여주는 부분
 const HeaderStyle = styled.div`
@@ -115,16 +115,19 @@ class OpenviduDefault extends Component {
   }
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
-
-    axios
-      .get("http://localhost:80/api/v1/musics/all")
-      .then((response) => {
-        this.setState({ songs: response.data });
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  
+    axios({
+      method: 'get',
+      url: APPLICATION_SERVER_URL + "musics/all",
+      withCredentials: true,
+    })
+    .then((response) => {
+      this.setState({ songs: response.data });
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   componentWillUnmount() {
@@ -520,7 +523,7 @@ class OpenviduDefault extends Component {
 
   async createSession(sessionId) {
     const response = await axios.post(
-      APPLICATION_SERVER_URL + "api/sessions",
+      APPLICATION_SERVER_URL + "rooms/create",
       { customSessionId: sessionId },
       {
         headers: { "Content-Type": "application/json" },
@@ -531,13 +534,13 @@ class OpenviduDefault extends Component {
 
   async createToken(sessionId) {
     const response = await axios.post(
-      APPLICATION_SERVER_URL + "api/sessions/" + sessionId + "/connections",
+      APPLICATION_SERVER_URL + "rooms/enter/" + sessionId,
       {},
       {
         headers: { "Content-Type": "application/json" },
       }
     );
-    return response.data; // The token
+    return response.data.data; // The token
   }
 }
 
