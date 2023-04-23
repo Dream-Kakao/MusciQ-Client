@@ -1,17 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import styled from "styled-components";
-
-// style
-const AppContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-`;
-
-const ContentsWrapper = styled.div`
-  flex: 1;
-`;
+import { createTheme, ThemeProvider } from "@mui/material";
 
 // components
 import SignUp from "./components/signup/SignUp";
@@ -23,37 +13,53 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import RoomListContainer from "./components/room/RoomListContainer";
 
+const theme = createTheme({
+  typography: {
+    fontFamily: "'NeoDunggeunmo Pro', serif"
+  }
+});
+
 const App = () => {
   return (
-    <AppContainer>
-      <div className="headerWrap">
-        <Header />
-      </div>
-
-      <ContentsWrapper>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<SignUp></SignUp>} />
-              <Route
-                path="/openvidu"
-                element={<OpenviduDefault></OpenviduDefault>}
-              />
-              <Route path="/roomlist" element={<RoomListContainer />} />
-              <Route path="/signup" element={<SignUp></SignUp>} />
-              <Route path="/login" element={<Login></Login>} />
-              <Route path="/mypage" element={<MyPage></MyPage>} />
-              <Route path="/modify" element={<Modify></Modify>} />
-            </Routes>
-          </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <AppContainer>
+        <div className="headerWrap">
+          <Header />
         </div>
-      </ContentsWrapper>
 
-      <div className="footerWrap">
-        <Footer />
-      </div>
-    </AppContainer>
+        <ContentsWrapper>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<SignUp></SignUp>} />
+                <Route path="/openvidu" element={<OpenviduDefault></OpenviduDefault>} />
+                <Route path="/roomlist" element={<RoomListContainer />} />
+                <Route path="/signup" element={<SignUp></SignUp>} />
+                <Route path="/login" element={<Login></Login>} />
+                <Route path="/mypage" element={<MyPage></MyPage>} />
+                <Route path="/modify" element={<Modify></Modify>} />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </ContentsWrapper>
+
+        <div className="footerWrap">
+          <Footer />
+        </div>
+      </AppContainer>
+    </ThemeProvider>
   );
 };
 
 export default App;
+
+// style
+const AppContainer = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ContentsWrapper = styled.div`
+  flex: 1;
+`;
