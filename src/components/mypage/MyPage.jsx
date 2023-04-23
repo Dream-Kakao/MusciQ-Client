@@ -1,7 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
-import default_profile from "../../img/default_profile.png";
+// logic
+function MyPage() {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({});
+  const [imageFile, setImageFile] = useState();
+
+  useEffect(() => {
+    const userId = localStorage.getItem("UserID");
+    const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+
+    fetch(url, {
+      method: 'GET',
+      credentials: 'include',
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        setUser(res.data);
+        setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, []);
+
+  const onClickModify = () => {
+    navigate(`/modify`);
+  };
+
+  return (
+    <div>
+      <MyPageContainer>
+        <Wrapper>
+          <ProfileImage src={imageFile} alt="Profile Picture" />
+          <Record>🎉{user.games_count}전 {user.win_count}승🎉</Record>
+        </Wrapper>
+
+        <InfoWrapper>
+          <IdLabel>ID </IdLabel>
+          <Id>{user.id}</Id>
+
+          <EmailLabel>E-mail </EmailLabel>
+          <Email>{user.email}</Email>
+
+          <NicknameLabel>Nickname </NicknameLabel>
+          <Nickname>{user.nickname}</Nickname>
+        </InfoWrapper>
+      </MyPageContainer>
+      <ModifyButton onClick={onClickModify}>정보 수정</ModifyButton>
+    </div>
+  );
+}
+
+export default MyPage;
 
 // style
 const MyPageContainer = styled.div`
@@ -92,31 +148,3 @@ const ModifyButton = styled.button`
     background-color: #80ffdb;
   }
 `;
-
-// logic
-function MyPage() {
-  return (
-    <div>
-      <MyPageContainer>
-        <Wrapper>
-          <ProfileImage src={default_profile} alt="Profile Picture" />
-          <Record>🎉100전 100승🎉</Record>
-        </Wrapper>
-
-        <InfoWrapper>
-          <IdLabel>ID </IdLabel>
-          <Id>나는 아이디</Id>
-
-          <EmailLabel>E-mail </EmailLabel>
-          <Email>john.doe@example.com</Email>
-
-          <NicknameLabel>Nickname </NicknameLabel>
-          <Nickname>나는 닉네임</Nickname>
-        </InfoWrapper>
-      </MyPageContainer>
-      <ModifyButton>정보 수정</ModifyButton>
-    </div>
-  );
-}
-
-export default MyPage;
