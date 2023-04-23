@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 // style
@@ -116,6 +116,7 @@ const UnregisterButton = styled.button`
 // logic
 function Modify() {
   const navigate = useNavigate()
+
   // 전송할 실제 이미지 파일
   const [postImage, setPostImage] = useState(null);
 
@@ -128,13 +129,18 @@ function Modify() {
       profile_img: ''
     }
   })
-  const [nickname, setNickname] = useState();
-  const [path, setPath] = useState();
-  const [uuid, setUuid] = useState();
-  const [profile_img, setProfile_Img] = useState();
 
   // 현재 이미지
   const [imageFile, setImageFile] = useState();
+
+  // 현재 비밀번호
+  const [curPassword, setCurPassword] = useState();
+
+  // 변경할 비밀번호 
+  const [newPassword, setNewPassword] = useState();
+
+  // 변경할 비밀번호 확인
+  const [chkNewPassword, setNewChkPassword] = useState();
 
   useEffect(() => {
     const userId = localStorage.getItem("UserID")
@@ -147,19 +153,17 @@ function Modify() {
         return res.json()
       })
       .then((res) => {
-        // setChangeInfo({
-        //   ...changeInfo,
-        //   nickname: res.data.nickname,
-        //   memberImage: {
-        //     uuid: res.data.profile_img.uuid,
-        //     path: res.data.profile_img.path,
-        //     profile_img: res.data.profile_img.profile_img
-        //   }
-        // })
-        setNickname(res.data.nickname)
-        setPath(res.data.profile_img.path)
-        setUuid(res.data.profile_img.uuid)
-        setProfile_Img(res.data.profile_img.profile_img)
+
+        setChangeInfo({
+          ...changeInfo,
+          nickname: res.data.nickname,
+          memberImage: {
+            uuid: res.data.profile_img.uuid,
+            path: res.data.profile_img.path,
+            profile_img: res.data.profile_img.profile_img
+          }
+        })
+
         setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img)
       })
       .catch((error) => {
@@ -180,55 +184,148 @@ function Modify() {
 
   // 닉네임 Input 변경하기
   const onChangeNickNameInput = (e) => {
-    // setChangeInfo({
-    //   ...changeInfo,
-    //   nickname: e.target.value
-    // })
-    setNickname(e.target.value)
+    setChangeInfo({
+      ...changeInfo,
+      nickname: e.target.value
+    })
   }
 
-  // 이미지 업로드 요청
-  const uploadS3 = () => {
-    console.log(postImage)
-    const url = `${process.env.REACT_APP_API_URL_V1}members/member/upload/S3`;
-    const formData = new FormData();
+  // 회원정보 수정 요청
+  const onClickModifyButton = () => {
+    if (window.confirm("회원정보를 업데이트 하시겠습니까?")) {
+      if (postImage) {
+        const url = `${process.env.REACT_APP_API_URL_V1}members/member/upload/S3`;
+        const formData = new FormData();
+        formData.append('uploadFile', postImage);
 
-    if (postImage) {
-      formData.append('uploadFile', postImage);
+        fetch(url, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        })
+          .then((res) => {
+            return res.json()
+          })
+          .then((res) => {
+            const userId = localStorage.getItem("UserID");
+            const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+            fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                nickname: changeInfo.nickname,
+                memberImage: {
+                  uuid: res.uuid,
+                  path: res.path,
+                  profile_img: res.profile_img
+                }
+              })
+            })
+              .then((res) => {
+                return res.json()
+              })
+              .then((res) => {
+                console.log(res)
+                alert("회원정보가 정상적으로 변경되었습니다.")
+              })
+              .catch((err) => {
+                console.log(err)
+                alert("현재 닉네임 변경이 불가능합니다, 죄송합니다.")
+              })
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("현재 이미지 업로드가 불가능합니다, 죄송합니다.")
+          })
+      } else {
+
+        // 이미지가 없는 경우 
+        const userId = localStorage.getItem("UserID");
+        const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+        fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            nickname: changeInfo.nickname,
+            memberImage: {
+              uuid: changeInfo.memberImage.uuid,
+              path: changeInfo.memberImage.path,
+              profile_img: changeInfo.memberImage.profile_img
+            }
+          })
+        })
+          .then((res) => {
+            return res.json()
+          })
+          .then((res) => {
+            console.log(res)
+            alert("회원정보가 정상적으로 변경되었습니다.")
+          })
+          .catch((err) => {
+            console.log(err)
+            alert("현재 닉네임 변경이 불가능합니다, 죄송합니다.")
+          })
+      }
+    }
+  }
+
+  const onChangeInputCurPW = (e) => {
+    setCurPassword(e.target.value)
+  }
+
+  const onChangeInputNewPW = (e) =>{
+    setNewPassword(e.target.value)
+  }
+
+  const onChangeInputNewPWCheck = (e) =>{
+    setNewChkPassword(e.target.value)
+  }
+
+  // password 유효성 검사
+  const validatePassword = (password) => {
+    const passwordRegex = /(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).{8,16}$/;
+    if (!passwordRegex.test(password)) {
+      return false; // 비밀번호 유효성 X
+    } else {
+      return true; // 비밀번호 유효성 O
+    }
+  };
+
+  // password 같은지 검사
+  const equalPassword = (password, passwordConfirm) => {
+    if (password !== passwordConfirm) {
+      return false; // 비밀번호 다름
+    } else {
+      return true; // 비밀번호 같음
+    }
+  };
+
+
+  const onClickModifyPW = () => {
+
+    if (validatePassword(curPassword) === false){
+      alert("현재 비밀번호는 숫자+영문자+특수문자 조합으로 8자리 이상 으로 구성되어 있습니다.")
+      return;
     }
 
-    fetch(url, {
-      method: 'POST',
-      body: formData,
-      credentials: 'include'
-    })
-      .then((res) => {
-        return res.json()
-      })
-      .then((res) => {
-        // setChangeInfo({
-        //   ...changeInfo,
-        //   memberImage: {
-        //     uuid: res.uuid,
-        //     path: res.path,
-        //     profile_img: res.profile_img
-        //   }
-        // })
-        setPath(res.path)
-        setUuid(res.uuid)
-        setProfile_Img(res.profile_img)
-        
-      })
-      .catch((error) => {
-        alert("현재 이미지 업로드가 불가능합니다, 죄송합니다.")
-        //navigate('/roomlist')
-      })
-  }
+    if (validatePassword(newPassword) === false){
+      alert("변경할 비밀번호는 숫자+영문자+특수문자 조합으로 8자리 이상 으로 구성되어야 합니다.")
+      return;
+    }
 
-  // 회원 정보 수정 요청
-  const changeMemberInfo = () => {
+    if(equalPassword(newPassword, chkNewPassword) === false){
+      alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
+      return;
+    }
+
     const userId = localStorage.getItem("UserID");
-    const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+    const url = `${process.env.REACT_APP_API_URL_V1}members/password/${userId}`;
     fetch(url, {
       method: 'PUT',
       headers: {
@@ -236,44 +333,86 @@ function Modify() {
       },
       credentials: 'include',
       body: JSON.stringify({
-        nickname: nickname,
-        memberImage:{
-          uuid: uuid,
-          path: path,
-          profile_img: profile_img
-        }
-      }),
-
+        curPassword: curPassword,
+        changedPassword: newPassword,
+        chkChangedPassword: chkNewPassword 
+      })
     })
-      .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        console.log(res)
-      })
+    .then((res) => {
+      return res.json();
+    })
+    .then((res) => {
+      if(res.success === true){
+        alert("비밀번호가 정상적으로 변경되었습니다.")
+        window.location.replace("/modify")
+      } else {
+        if(res.error === 'NOT_EQUALS_INPUT_CURRENT_PW'){
+          alert("현재 비밀번호가 일치하지 않습니다.")
+        } else if (res.error === 'NOT_EQUALS_INPUT_CHANGED_PW'){
+          alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
+        } else {
+          alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+        }
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+    })
   }
 
-  // 회원정보 수정
-  const onClickModifyButton = () => {
-    if (window.confirm("입력하신 정보로 회원 정보를 수정합니다.")) {
-      if (postImage != null) {
-        uploadS3()
-        changeMemberInfo()
-        
-      } else {
-        // 이미지 업로드 하지 않은 경우에 닉네임만 수정 요청하도록 지정
-        changeMemberInfo();
-        alert("회원 정보 수정 완료.");
-      }
+  const onClickWithdrawal = () => {
+    if(window.confirm("정말로 탈퇴하시겠습니까?")){
+      const userId = localStorage.getItem("UserID");
+    const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+
+    fetch(url,{
+      method: "DELETE",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    })
+    .then((res) => {
+      return res.json()
+    })
+    .then((res) => {
+      console.log(res)
+    })
+    .then(
+      fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
+        method: "GET",
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const success = data.success;
+          if (success) {
+            localStorage.removeItem("Auth");
+            localStorage.removeItem("AuthExpiration");
+            alert("정상적으로 회원 정보가 삭제 되었습니다.");
+            navigate("/login");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("비정상 적인 요청 경로로 입장했습니다.");
+          navigate("/login");
+        })
+    )
+    .catch((err) => {
+      console.log(err)
+      alert("현재 회원탈퇴가 불가능합니다, 죄송합니다.")
+    })
     }
   }
-  
+
   return (
     <ModifyContainer>
       <InfoWrapper>
         <ProfileImageWrapper>
           <label htmlFor="profileImage">
-            <ProfileImage src={imageFile} alt="Profile Picture"/>
+            <ProfileImage src={imageFile} alt="Profile Picture" />
             <input
               id="profileImage"
               type="file"
@@ -283,22 +422,19 @@ function Modify() {
             />
           </label>
         </ProfileImageWrapper>
-        <ModifyInput1 id="nickname" type="text" value={nickname} onChange={onChangeNickNameInput} />
+        <ModifyInput1 id="nickname" type="text" value={changeInfo.nickname} onChange={onChangeNickNameInput} />
 
         <ButtonWrapper1>
           <ModifyButton1 onClick={onClickModifyButton}>회원정보 수정</ModifyButton1>
         </ButtonWrapper1>
 
-        <ModifyInput2 id="password" type="password" placeholder="Password" />
-        <ModifyInput2
-          id="passwordConfirm"
-          type="password"
-          placeholder="Password 확인"
-        />
+        <ModifyInput2 id="curpassword" type="password" placeholder="현재 비밀번호" onChange={onChangeInputCurPW} />
+        <ModifyInput2 id="password" type="password" placeholder="변경할 비밀번호" onChange={onChangeInputNewPW}/>
+        <ModifyInput2 id="passwordConfirm" type="password" placeholder="변경 비밀번호 확인" onChange={onChangeInputNewPWCheck}/>
 
         <ButtonWrapper2>
-          <ModifyButton2>비밀번호 수정</ModifyButton2>
-          <UnregisterButton>탈퇴</UnregisterButton>
+          <ModifyButton2 onClick={onClickModifyPW}>비밀번호 수정</ModifyButton2>
+          <UnregisterButton onClick={onClickWithdrawal}>탈퇴</UnregisterButton>
         </ButtonWrapper2>
       </InfoWrapper>
     </ModifyContainer>

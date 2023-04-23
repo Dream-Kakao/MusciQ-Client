@@ -526,6 +526,7 @@ class OpenviduDefault extends Component {
       APPLICATION_SERVER_URL + "rooms/create",
       { customSessionId: sessionId },
       {
+        withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
@@ -537,6 +538,7 @@ class OpenviduDefault extends Component {
       APPLICATION_SERVER_URL + "rooms/enter/" + sessionId,
       {},
       {
+        withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
