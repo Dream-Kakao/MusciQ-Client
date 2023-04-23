@@ -56,14 +56,11 @@ function SignUp() {
     if (expiration && currentTime > parseInt("AuthExpiration")) {
       localStorage.removeItem("Auth"); // Access Token 제거
       localStorage.removeItem("AuthExpiration");
-    }
-
-    // Access Token을 찾아서
-    const accessToken = localStorage.getItem("Auth");
-    console.log(accessToken);
-    // Access Token이 있다면 회원가입 페이지가 아니라 로그인 페이지로 이동
-    if (accessToken != null) {
-      window.location.replace("/login");
+    } 
+    const accessToken = localStorage.getItem("Auth")
+    console.log(accessToken)
+    if(accessToken != null){
+      window.location.replace("/login")
     }
   }, []);
 
@@ -154,18 +151,12 @@ function SignUp() {
         // id 중복되지 않음
         const jsonRes = res.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.success);
-
         setIdError(false);
         setIdOkMessage("사용 가능 😆");
       })
       .catch((err) => {
         // id 중복됨
         const jsonRes = err.response.data;
-
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setIdError(true);
         setIdErrorMessage("중복된 ID 입니다.");
@@ -195,8 +186,6 @@ function SignUp() {
         // email 중복되지 않음
         const jsonRes = res.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.success);
 
         setEmailError(false);
         setEmailOkMessage("사용 가능 😆");
@@ -204,9 +193,6 @@ function SignUp() {
       .catch((err) => {
         // email 중복됨
         const jsonRes = err.response.data;
-
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setEmailError(true);
         setEmailErrorMessage("중복된 Email 입니다.");
@@ -241,8 +227,6 @@ function SignUp() {
         // 닉네임 중복되지 않음
         const jsonRes = res.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.success);
 
         setNicknameError(false);
         setNicknameOkMessage("사용 가능 😆");
@@ -251,8 +235,6 @@ function SignUp() {
         // 닉네임 중복됨
         const jsonRes = err.response.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setNicknameError(true);
         setNicknameErrorMessage("중복된 nickname 입니다.");

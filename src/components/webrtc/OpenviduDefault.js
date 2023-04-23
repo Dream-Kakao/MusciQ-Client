@@ -115,16 +115,19 @@ class OpenviduDefault extends Component {
   }
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
-
-    axios
-      .get(APPLICATION_SERVER_URL + "musics/all")
-      .then((response) => {
-        this.setState({ songs: response.data });
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  
+    axios({
+      method: 'get',
+      url: APPLICATION_SERVER_URL + "musics/all",
+      withCredentials: true,
+    })
+    .then((response) => {
+      this.setState({ songs: response.data });
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   componentWillUnmount() {
@@ -523,6 +526,7 @@ class OpenviduDefault extends Component {
       APPLICATION_SERVER_URL + "rooms/create",
       { customSessionId: sessionId },
       {
+        withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
@@ -534,6 +538,7 @@ class OpenviduDefault extends Component {
       APPLICATION_SERVER_URL + "rooms/enter/" + sessionId,
       {},
       {
+        withCredentials: true,
         headers: { "Content-Type": "application/json" },
       }
     );
