@@ -346,12 +346,22 @@ class OpenviduDefault extends Component {
 
   // 고른 노래들로부터 유튜브노래 재생하기 위한 videoId를 추출하는 메서드
   handleMusicSelected(musicSelected) {
-    const playlist = musicSelected.map((music) => {
-      return JSON.parse(music.value).videoId;
-    });
+    // 하나만 선택되기 위해
+    if (musicSelected.length > 1) {
+      this.setState({
+        musicSelected: musicSelected.slice(musicSelected.length - 1),
+      });
+    } else {
+      this.setState({ musicSelected: musicSelected });
+    }
+
+    // musicSelected 배열의 마지막 원소
+    const music = musicSelected[musicSelected.length - 1];
+    console.log(music);
+
+    const playlist = JSON.parse(music.value).videoId;
 
     this.setState({
-      musicSelected: musicSelected,
       playlist: playlist,
     });
   }
