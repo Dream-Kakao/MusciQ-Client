@@ -36,8 +36,34 @@ const SignupButton = styled.button`
   }
 `;
 
+const TextButton = styled.button`
+  background-color: transparent;
+  border: none;
+  margin-bottom: 10px;
+  color: #64dfdf;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+`;
+
 // !logic
 function SignUp() {
+  useEffect(() => {
+    const expiration = localStorage.getItem("AuthExpiration");
+    const currentTime = new Date().getTime();
+
+    // Access Token이 만료 됐다면
+    if (expiration && currentTime > parseInt("AuthExpiration")) {
+      localStorage.removeItem("Auth"); // Access Token 제거
+      localStorage.removeItem("AuthExpiration");
+    } 
+    const accessToken = localStorage.getItem("Auth")
+    console.log(accessToken)
+    if(accessToken != null){
+      window.location.replace("/login")
+    }
+  }, []);
+
   // form에 입력된 데이터들
   const [formData, setFormData] = useState({
     id: "",
@@ -96,6 +122,10 @@ function SignUp() {
   const navigate = useNavigate();
 
   // !method
+  const onClickGotoLogin = () => {
+    navigate("/login");
+  };
+
   // id 유효성 검사, 중복 검사
   const checkId = async (id) => {
     // 유효성 검사
@@ -114,13 +144,12 @@ function SignUp() {
 
     // 중복검사
     await axios
-      .get(`${process.env.REACT_APP_API_URL_V1}members/id/${id}`)
+      .get(`${process.env.REACT_APP_API_URL_V1}members/id/${id}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         // id 중복되지 않음
         const jsonRes = res.data;
-
-        console.log(jsonRes);
-        console.log(jsonRes.success);
 
         setIdError(false);
         setIdOkMessage("사용 가능 😆");
@@ -128,9 +157,6 @@ function SignUp() {
       .catch((err) => {
         // id 중복됨
         const jsonRes = err.response.data;
-
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setIdError(true);
         setIdErrorMessage("중복된 ID 입니다.");
@@ -153,13 +179,13 @@ function SignUp() {
 
     // 중복 검사
     await axios
-      .get(`${process.env.REACT_APP_API_URL_V1}members/email/${email}`)
+      .get(`${process.env.REACT_APP_API_URL_V1}members/email/${email}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         // email 중복되지 않음
         const jsonRes = res.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.success);
 
         setEmailError(false);
         setEmailOkMessage("사용 가능 😆");
@@ -167,9 +193,6 @@ function SignUp() {
       .catch((err) => {
         // email 중복됨
         const jsonRes = err.response.data;
-
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setEmailError(true);
         setEmailErrorMessage("중복된 Email 입니다.");
@@ -179,7 +202,7 @@ function SignUp() {
   // nickname 유효성 검사, 중복 검사
   const checkNickname = async (id, nickname) => {
     // 유효성 검사
-    const nicknameRegex = /^[ㄱ-ㅎ가-힣a-z0-9-_]{2,10}$/;
+    const nicknameRegex = /^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$/;
     if (!nicknameRegex.test(nickname)) {
       setNicknameError(true);
       setNicknameErrorMessage(
@@ -195,14 +218,15 @@ function SignUp() {
     // 중복 검사
     await axios
       .get(
-        `${process.env.REACT_APP_API_URL_V1}members/nickname/${id}/${nickname}`
+        `${process.env.REACT_APP_API_URL_V1}members/nickname/${id}/${nickname}`,
+        {
+          withCredentials: true,
+        }
       )
       .then((res) => {
         // 닉네임 중복되지 않음
         const jsonRes = res.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.success);
 
         setNicknameError(false);
         setNicknameOkMessage("사용 가능 😆");
@@ -211,8 +235,6 @@ function SignUp() {
         // 닉네임 중복됨
         const jsonRes = err.response.data;
 
-        console.log(jsonRes);
-        console.log(jsonRes.error);
 
         setNicknameError(true);
         setNicknameErrorMessage("중복된 nickname 입니다.");
@@ -286,7 +308,9 @@ function SignUp() {
     const postData = { id, email, nickname, password };
 
     await axios
-      .post(`${process.env.REACT_APP_API_URL_V1}members/member`, postData)
+      .post(`${process.env.REACT_APP_API_URL_V1}members/member`, postData, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res, "회원가입 성공");
         alert("회원가입 성공! 🎉");
@@ -301,6 +325,7 @@ function SignUp() {
 
   return (
     <SignUpForm>
+      <TextButton onClick={onClickGotoLogin}>로그인 하러가기!</TextButton>
       <InputWithButton
         id="id"
         value={formData.id}
