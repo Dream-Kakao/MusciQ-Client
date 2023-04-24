@@ -1,19 +1,23 @@
-import { OpenVidu } from "openvidu-browser";
-
-import axios from "axios";
-import styled from "styled-components";
-import Youtube from 'react-youtube';
 import React, { Component } from "react";
+import { OpenVidu } from "openvidu-browser";
+import UserVideoComponent from "./UserVideoComponent";
+import axios from "axios";
+import Youtube from "react-youtube";
+import { withRouter } from "react-router-dom";
+
+import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
 import { Button, Box } from "@material-ui/core";
-
-import UserVideoComponent from "./UserVideoComponent";
 import "./Openvidu.css";
+
+import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "http://localhost/api/v1/";
 
+// !logic
 class OpenviduDefault extends Component {
+  // !초기세팅
   constructor(props) {
     super(props);
 
@@ -32,6 +36,10 @@ class OpenviduDefault extends Component {
       player: null,
       playlist: [], // 선택한 음악(musicSelected)의 videoId만 가져와서 넣어놓은 배열
       //musicIndex: 0, // 지금 플레이할 음악의 인덱스
+      // game
+      synthesis: null, // 음성 합성 API
+      winnerName: null,
+      answer: false,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -46,13 +54,17 @@ class OpenviduDefault extends Component {
     // youtube
     this.handleReadyMusic = this.handleReadyMusic.bind(this); // 플레이어 준비
     this.handlePlayMusic = this.handlePlayMusic.bind(this); // 음악 재생
+    // game
+    this.playGame = this.playGame.bind(this);
+    this.oneRound = this.oneRound.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
 
+    // 방생성 시 노래목록 출력 위해 모든 노래 불러오기
     axios({
-      method: 'get',
+      method: "get",
       url: APPLICATION_SERVER_URL + "musics/all",
       withCredentials: true,
     })
@@ -104,6 +116,7 @@ class OpenviduDefault extends Component {
     }
   }
 
+  // !Openvidu 관련 메서드
   joinSession() {
     // --- 1) Get an OpenVidu object ---
 
@@ -264,9 +277,76 @@ class OpenviduDefault extends Component {
     }
   }
 
-  // 노래에 관련된 useState
+  // !method
+  // 게임 시작 메서드
+  async playGame(selectedSongs) {
+    for (const song of selectedSongs) {
+      const value = song.value;
+      const musicId = JSON.parse(value).musicId;
+
+      const audio = new Audio(CountdownSound1);
+      audio.play();
+      // 카운트다운 소리 끝날때까지 기다림
+      await new Promise((resolve) => {
+        audio.addEventListener("ended", async () => {
+          await this.oneRound(musicId);
+          resolve();
+        });
+      });
+
+      console.log("한 라운드 끝");
+    }
+  }
+
+  // 한 라운드 끝날때마다 이 함수 호출
+  async oneRound(musicId) {
+    await axios
+      .get(`${process.env.REACT_APP_API_URL_V1}games/lyrics`, {
+        params: {
+          id: musicId,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+
+        // 가사 얻어오기
+        const lyric = data[musicId];
+        console.log(lyric);
+
+        // 음성 합성 API
+        const synthesis = window.speechSynthesis;
+        this.setState({ synthesis: synthesis });
+
+        // 음성 출력 설정
+        var utterance = new SpeechSynthesisUtterance();
+        utterance.text = lyric;
+        utterance.lang = "ko-KR";
+        /* utterance.voice = synthesis.getVoices(); 목소리 설정 */
+        /* utterance.pitch = 1; 음성 높낮이 설정 (0~2) */
+        utterance.rate = 1; /* 음성 속도 설정 (0.1~10) */
+
+        // 음성 출력
+        // speak() 메서드는 비동기적으로 작동하므로 다음 로직이 동시에 실행되는 것을 막기 위해 promise 사용
+        return new Promise((resolve) => {
+          synthesis.speak(utterance);
+
+          utterance.onend = () => {
+            console.log("음성 재생 끝");
+            resolve();
+          };
+        });
+      })
+      .catch((err) => {
+        // api 요청 실패
+        console.error(err);
+      });
+  }
+
+  // 고른 노래들로부터 유튜브노래 재생하기 위한 videoId를 추출하는 메서드
   handleMusicSelected(musicSelected) {
-    const playlist = musicSelected.map(music => {
+    const playlist = musicSelected.map((music) => {
       return JSON.parse(music.value).videoId;
     });
 
@@ -279,18 +359,26 @@ class OpenviduDefault extends Component {
   // 플레이어를 지금 상태대로 셋팅
   handleReadyMusic(event) {
     this.setState({
-      player: event.target
+      player: event.target,
     });
-  };
+  }
 
   // 플레이어를 가져와서 음악을 재생
   handlePlayMusic(event) {
     const player = this.state.player;
     const musicSelected = this.state.musicSelected;
+    const synthesis = this.state.synthesis;
+
+    // 가사 정지
+    synthesis.cancel();
+
+    // 위너 띄우기
+    // todo winnerName을 모달창에 띄워주면될듯
+    console.log(this.state.winnerName);
 
     // 선택된 노래가 없는 경우 alert
     if (musicSelected.length === 0) {
-      alert("선택된 노래가 없어요 ¯＼_(ツ)_/¯");
+      alert("선택된 노래가 없어요🙈");
       return;
     }
 
@@ -302,13 +390,24 @@ class OpenviduDefault extends Component {
     // }));
   }
 
+  // 정답자 클릭했을때 정답자이름 setState
+  isWinner(stream, i) {
+    const subscribers = this.state.subscribers;
+    const winnerName = subscribers[i].stream.connection.data;
+
+    this.setState({ winnerName: JSON.parse(winnerName).clientData }); // 정답자 이름
+    this.setState({ answer: true }); // 정답버튼 활성화
+  }
+
   render() {
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
     const playlist = this.state.playlist;
     //const musicIndex = this.state.musicIndex;
 
-    // 음악을 고르기 위한 옵션 - value는 "musicId_videoId처럼 만들어지게 됨."
+    // MultiSelect에 들어갈 옵션
+    // label은 말그대로 라벨, 보여지는 모습
+    // value는 label에 해당하는 값, "{"musicId": 1, "videoId": "8DKRJ84JD"}" 처럼 문자열로 들어감
     const options = this.state.musics.map((music) => ({
       label: `${music.musicTitle} - ${music.singer}`,
       value: JSON.stringify({
@@ -319,7 +418,7 @@ class OpenviduDefault extends Component {
 
     return (
       // join session 하는 페이지. 추 후에 지워야 됨.
-      // container로 잡혀있기 때문에 자동으로 width가 85% 로 줄어들게 됨. 추 후에 이 부분만 줄이던가 해야될듯?
+      // todo container로 잡혀있기 때문에 자동으로 width가 85% 로 줄어들게 됨. 추 후에 이 부분만 줄이던가 해야될듯?
       <div className="container">
         {this.state.session === undefined ? (
           <div id="join">
@@ -395,7 +494,7 @@ class OpenviduDefault extends Component {
               왜 다 publisher로 잡히는걸까? */}
 
             {/* body 내 body~footer 부분. */}
-            <HeaderStyle id="video-container">
+            <CardWrapper id="video-container">
               {/* publisher 화면이 나오게 하는 부분 */}
               {this.state.publisher !== undefined ? (
                 <PublisherCard
@@ -413,26 +512,26 @@ class OpenviduDefault extends Component {
                 <SubScriberCard
                   key={sub.id}
                   className="stream-container"
-                  onClick={() => this.handleMainVideoStream(sub)}
+                  onClick={() => this.isWinner(sub, i)}
                 >
                   <span>{sub.id}</span>
                   <UserVideoComponent streamManager={sub} />
                 </SubScriberCard>
               ))}
-            </HeaderStyle>
+            </CardWrapper>
 
             {/* youtube - 안 보이게 숨겨놨음! */}
             <S.YoutubeWrapper hidden>
               <Youtube
-                id='iframe'
+                id="iframe"
                 videoId={playlist[0]}
                 opts={{
                   width: 400,
                   height: 300,
                   playerVars: {
                     disablekb: 1, // 플레이어가 키보드 컨트롤에 응답하지 않음
-                    start: 1, // 재생 구간의 시작(초)
-                    end: 10, // 재생 구간의 끝(초)
+                    start: 65, // 재생 구간의 시작(초)
+                    end: 80, // 재생 구간의 끝(초)
                   },
                 }}
                 onReady={this.handleReadyMusic}
@@ -440,7 +539,7 @@ class OpenviduDefault extends Component {
               />
             </S.YoutubeWrapper>
 
-            <AllofButtons>
+            <AllElements>
               <div
                 style={{
                   display: "flex",
@@ -467,12 +566,24 @@ class OpenviduDefault extends Component {
                 }}
               >
                 {this.state.publisher !== undefined ? (
-                  <ReadyButton variant="contained">게임시작</ReadyButton>
+                  <ReadyButton
+                    variant="contained"
+                    onClick={() => this.playGame(this.state.musicSelected)}
+                  >
+                    게임시작
+                  </ReadyButton>
                 ) : null}
-                <ExitButton variant="outlined">나가기</ExitButton>
-                <ExitButton onClick={this.handlePlayMusic}>정답</ExitButton>
+                <AnswerButton
+                  disabled={this.state.answer === false}
+                  onClick={this.handlePlayMusic}
+                >
+                  정답
+                </AnswerButton>
+                <ExitButton variant="outlined" onClick={this.leaveSession}>
+                  나가기
+                </ExitButton>
               </div>
-            </AllofButtons>
+            </AllElements>
           </div>
         ) : null}
       </div>
@@ -526,13 +637,15 @@ class OpenviduDefault extends Component {
 
 export default OpenviduDefault;
 
+// !style
 // 화면 중 사람들 얼굴 보여주는 부분
-const HeaderStyle = styled.div`
+const CardWrapper = styled.div`
   display: flex;
   width: 100%;
   background: #252525;
-  border: 2px solid #6930c3;
+  border: 7px solid #6930c3;
   border-radius: 20px;
+  border-style: outset;
 `;
 
 const PublisherCard = styled.div`
@@ -558,7 +671,7 @@ const SubScriberCard = styled.div`
   box-shadow: 1px 3px 8px rgba(0, 0, 0, 100);
 `;
 
-const AllofButtons = styled.div`
+const AllElements = styled.div`
   display: flex;
   background: #252525;
   justify-content: space-between;
@@ -567,45 +680,67 @@ const AllofButtons = styled.div`
   height: 30%;
 `;
 
-const ExitButton = styled(Button)`
-  && {
-    width: 100%;
-    height: auto;
-    border: 2px solid #64dfdf;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 13px;
-    color: #6930c3;
+const ReadyButton = styled.button`
+  width: 100%;
+  height: 50px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: #6930c3;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+
+  &:hover {
+    background-color: #80ffdb;
   }
 `;
 
-const ReadyButton = styled(Button)`
-  && {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-    background: #6930c3;
-    font-weight: bold;
-    font-size: 13px;
-    color: #64dfdf;
+const AnswerButton = styled.button`
+  width: 100%;
+  height: 50px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: #6930c3;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: #80ffdb;
   }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+`;
+
+const ExitButton = styled.button`
+  width: 100%;
+  height: 50px;
+  padding: 10px 20px;
+  border: 3px solid #6930c3;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
 `;
 
 const ShowParticipant = styled(Box)`
   && {
     width: 100%;
-    height: auto;
-    border: 2px solid #6930c3;
+    height: 50px;
+    border: 3px solid #6930c3;
     border-radius: 5px;
     text-align: center;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 20px;
     color: #64dfdf;
   }
 `;
 
 const S = {
   YoutubeWrapper: styled.div`
-      visibility: ${(p) => p.hidden && "hidden"};
+    visibility: ${(p) => p.hidden && "hidden"};
   `,
 };
