@@ -2,117 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 
-// style
-const ModifyContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-`;
-
-const ProfileImageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ProfileImage = styled.img`
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-`;
-
-const InfoWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ModifyInput1 = styled.input`
-  border: 3px solid #6930c3;
-  width: 400px;
-  padding: 10px;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  background-color: #000;
-  color: #fff;
-  box-shadow: 0px 0px 5px #ccc;
-  font-size: 20px;
-`;
-const ModifyInput2 = styled.input`
-  border: 3px solid #6930c3;
-  width: 400px;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  background-color: #000;
-  color: #fff;
-  box-shadow: 0px 0px 5px #ccc;
-  font-size: 20px;
-`;
-
-const ButtonWrapper1 = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-`;
-
-const ButtonWrapper2 = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-`;
-
-const ModifyButton1 = styled.button`
-  background-color: #64dfdf;
-  width: 160px;
-  height: 50px;
-  padding: 10px 20px;
-  margin-top: 20px;
-  margin-bottom: 50px;
-  color: #6930c3;
-  border: none;
-  border-radius: 5px;
-  font-size: 20px;
-
-  &:hover {
-    background-color: #80ffdb;
-  }
-`;
-
-const ModifyButton2 = styled.button`
-  background-color: #64dfdf;
-  width: 160px;
-  height: 50px;
-  padding: 10px 20px;
-  margin-top: 20px;
-  color: #6930c3;
-  border: none;
-  border-radius: 5px;
-  font-size: 20px;
-
-  &:hover {
-    background-color: #80ffdb;
-  }
-`;
-
-
-const UnregisterButton = styled.button`
-  width: 140px;
-  height: 50px;
-  padding: 10px 20px;
-  margin-top: 20px;
-  color: #fff;
-  border: 3px solid #64dfdf;
-  border-radius: 5px;
-  font-size: 20px;
-`;
-
 // logic
 function Modify() {
   const navigate = useNavigate()
@@ -279,11 +168,11 @@ function Modify() {
     setCurPassword(e.target.value)
   }
 
-  const onChangeInputNewPW = (e) =>{
+  const onChangeInputNewPW = (e) => {
     setNewPassword(e.target.value)
   }
 
-  const onChangeInputNewPWCheck = (e) =>{
+  const onChangeInputNewPWCheck = (e) => {
     setNewChkPassword(e.target.value)
   }
 
@@ -306,20 +195,19 @@ function Modify() {
     }
   };
 
-
   const onClickModifyPW = () => {
 
-    if (validatePassword(curPassword) === false){
+    if (validatePassword(curPassword) === false) {
       alert("현재 비밀번호는 숫자+영문자+특수문자 조합으로 8자리 이상 으로 구성되어 있습니다.")
       return;
     }
 
-    if (validatePassword(newPassword) === false){
+    if (validatePassword(newPassword) === false) {
       alert("변경할 비밀번호는 숫자+영문자+특수문자 조합으로 8자리 이상 으로 구성되어야 합니다.")
       return;
     }
 
-    if(equalPassword(newPassword, chkNewPassword) === false){
+    if (equalPassword(newPassword, chkNewPassword) === false) {
       alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
       return;
     }
@@ -335,75 +223,75 @@ function Modify() {
       body: JSON.stringify({
         curPassword: curPassword,
         changedPassword: newPassword,
-        chkChangedPassword: chkNewPassword 
+        chkChangedPassword: chkNewPassword
       })
     })
-    .then((res) => {
-      return res.json();
-    })
-    .then((res) => {
-      if(res.success === true){
-        alert("비밀번호가 정상적으로 변경되었습니다.")
-        window.location.replace("/modify")
-      } else {
-        if(res.error === 'NOT_EQUALS_INPUT_CURRENT_PW'){
-          alert("현재 비밀번호가 일치하지 않습니다.")
-        } else if (res.error === 'NOT_EQUALS_INPUT_CHANGED_PW'){
-          alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        if (res.success === true) {
+          alert("비밀번호가 정상적으로 변경되었습니다.")
+          window.location.replace("/modify")
         } else {
-          alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+          if (res.error === 'NOT_EQUALS_INPUT_CURRENT_PW') {
+            alert("현재 비밀번호가 일치하지 않습니다.")
+          } else if (res.error === 'NOT_EQUALS_INPUT_CHANGED_PW') {
+            alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
+          } else {
+            alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+          }
         }
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-      alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
-    })
+      })
+      .catch((err) => {
+        console.log(err)
+        alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+      })
   }
 
   const onClickWithdrawal = () => {
-    if(window.confirm("정말로 탈퇴하시겠습니까?")){
+    if (window.confirm("정말로 탈퇴하시겠습니까?")) {
       const userId = localStorage.getItem("UserID");
-    const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
+      const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
 
-    fetch(url,{
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    })
-    .then((res) => {
-      return res.json()
-    })
-    .then((res) => {
-      console.log(res)
-    })
-    .then(
-      fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
-        method: "GET",
-        credentials: "include",
+      fetch(url, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       })
-        .then((res) => res.json())
-        .then((data) => {
-          const success = data.success;
-          if (success) {
-            localStorage.removeItem("Auth");
-            localStorage.removeItem("AuthExpiration");
-            alert("정상적으로 회원 정보가 삭제 되었습니다.");
-            navigate("/login");
-          }
+        .then((res) => {
+          return res.json()
         })
+        .then((res) => {
+          console.log(res)
+        })
+        .then(
+          fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
+            method: "GET",
+            credentials: "include",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              const success = data.success;
+              if (success) {
+                localStorage.removeItem("Auth");
+                localStorage.removeItem("AuthExpiration");
+                alert("정상적으로 회원 정보가 삭제 되었습니다.");
+                navigate("/login");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              alert("비정상 적인 요청 경로로 입장했습니다.");
+              navigate("/login");
+            })
+        )
         .catch((err) => {
-          console.log(err);
-          alert("비정상 적인 요청 경로로 입장했습니다.");
-          navigate("/login");
+          console.log(err)
+          alert("현재 회원탈퇴가 불가능합니다, 죄송합니다.")
         })
-    )
-    .catch((err) => {
-      console.log(err)
-      alert("현재 회원탈퇴가 불가능합니다, 죄송합니다.")
-    })
     }
   }
 
@@ -429,8 +317,8 @@ function Modify() {
         </ButtonWrapper1>
 
         <ModifyInput2 id="curpassword" type="password" placeholder="현재 비밀번호" onChange={onChangeInputCurPW} />
-        <ModifyInput2 id="password" type="password" placeholder="변경할 비밀번호" onChange={onChangeInputNewPW}/>
-        <ModifyInput2 id="passwordConfirm" type="password" placeholder="변경 비밀번호 확인" onChange={onChangeInputNewPWCheck}/>
+        <ModifyInput2 id="password" type="password" placeholder="변경할 비밀번호" onChange={onChangeInputNewPW} />
+        <ModifyInput2 id="passwordConfirm" type="password" placeholder="변경 비밀번호 확인" onChange={onChangeInputNewPWCheck} />
 
         <ButtonWrapper2>
           <ModifyButton2 onClick={onClickModifyPW}>비밀번호 수정</ModifyButton2>
@@ -442,3 +330,114 @@ function Modify() {
 }
 
 export default Modify;
+
+// style
+const ModifyContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+`;
+
+const ProfileImageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProfileImage = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+`;
+
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModifyInput1 = styled.input`
+  border: 3px solid #6930c3;
+  width: 400px;
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0px 0px 5px #ccc;
+  font-size: 20px;
+`;
+
+const ModifyInput2 = styled.input`
+  border: 3px solid #6930c3;
+  width: 400px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0px 0px 5px #ccc;
+  font-size: 20px;
+`;
+
+const ButtonWrapper1 = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const ButtonWrapper2 = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+const ModifyButton1 = styled.button`
+  background-color: #64dfdf;
+  width: 160px;
+  height: 50px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  color: #6930c3;
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+
+  &:hover {
+    background-color: #80ffdb;
+  }
+`;
+
+const ModifyButton2 = styled.button`
+  background-color: #64dfdf;
+  width: 160px;
+  height: 50px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  color: #6930c3;
+  border: none;
+  border-radius: 5px;
+  font-size: 20px;
+
+  &:hover {
+    background-color: #80ffdb;
+  }
+`;
+
+const UnregisterButton = styled.button`
+  width: 140px;
+  height: 50px;
+  padding: 10px 20px;
+  margin-top: 20px;
+  color: #fff;
+  border: 3px solid #64dfdf;
+  border-radius: 5px;
+  font-size: 20px;
+`;
