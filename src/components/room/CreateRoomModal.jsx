@@ -69,16 +69,17 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const CreateRoomButton = styled(Button)`
-  && {
-    width: 100%;
-    height: auto;
-    background: #64dfdf;
-    border: 2px solid #64dfdf;
-    border-radius: 100px;
-    font-weight: bold;
-    font-size: 16px;
-    color: #6930c3;
+const CreateRoomButton = styled.button`
+  background-color: #64dfdf;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 100px;
+  font-weight: bold;
+  color: #6930c3;
+
+  &:hover {
+    background-color: #80ffdb;
   }
 `;
 
