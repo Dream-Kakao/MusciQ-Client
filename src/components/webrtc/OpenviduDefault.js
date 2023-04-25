@@ -395,7 +395,7 @@ class OpenviduDefault extends Component {
 
     player.playVideo();
 
-    // // musicIndex를 1 증가 시킴(다음 노래 준비)
+    //  musicIndex를 1 증가 시킴(다음 노래 준비)
     // this.setState((prev) => ({
     //   musicIndex: (prev.musicIndex + 1) % musicSelected.length,
     // }));
@@ -587,22 +587,20 @@ class OpenviduDefault extends Component {
                 ) : null}
                 <GameResultDialog
                   winnerName={this.state.winnerName}
-                  disabled={this.state.answer === false}
-                  onClick={this.handlePlayMusic}
+                  answer={this.state.answer}
+                  handlePlayMusic={this.handlePlayMusic}
+                  // onClick={this.handlePlayMusic}
                 >
                   정답
                 </GameResultDialog>
 
-
-
                 <ExitButton variant="outlined" onClick={this.leaveSession}>
                   나가기
                 </ExitButton>
-              </div >
-            </AllElements >
-          </div >
-        ) : null
-        }
+              </div>
+            </AllElements>
+          </div>
+        ) : null}
       </div>
     );
   }

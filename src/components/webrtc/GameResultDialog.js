@@ -1,11 +1,11 @@
-import * as React from 'react';
+import * as React from "react";
 import styled from "styled-components";
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
 
 //import GameResultTable from './GameResultTable';
 
@@ -17,6 +17,7 @@ export default function AlertDialogSlide(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
+    props.handlePlayMusic();
     setOpen(true);
   };
 
@@ -26,7 +27,11 @@ export default function AlertDialogSlide(props) {
 
   return (
     <div>
-      <AnswerButton variant="outlined" onClick={handleClickOpen}>
+      <AnswerButton
+        disabled={props.answer === false}
+        variant="outlined"
+        onClick={handleClickOpen}
+      >
         정답
       </AnswerButton>
       <Dialog
@@ -39,10 +44,8 @@ export default function AlertDialogSlide(props) {
       >
         <DialogTitle>{"🎉 게임 결과 🎉"}</DialogTitle>
         <DialogContent>
-
           {/* <GameResultTable id="alert-dialog-slide-description" /> */}
           <p>{props.winnerName} 승리!</p>
-
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>닫기</Button>
