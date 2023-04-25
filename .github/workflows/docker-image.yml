@@ -53,7 +53,7 @@ jobs:
         docker images &&
         cd /home/runner/work/MusicQ-Client/MusicQ-Client &&
         cd drkkoProd &&
-        sed -i "s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g; s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g" deploy-client.yml &&
+        sed -i "s|${DOCKER_USERNAME}/${IMAGE_NAME}:6b153f904f4340816c7d53213a5213673ee93cb0|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g; s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g" deploy-client.yml &&
         git config --global user.email "${USER_EMAIL_GIT}" &&
         git config --global user.name "${USER_NAME_GIT}" &&  
         git commit -am "Update image tag" &&
