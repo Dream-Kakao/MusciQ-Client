@@ -407,7 +407,11 @@ class OpenviduDefault extends Component {
     const winnerName = subscribers[i].stream.connection.data;
 
     this.setState({ winnerName: JSON.parse(winnerName).clientData }); // 정답자 이름
-    this.setState({ answer: true }); // 정답버튼 활성화
+
+    // 게임을 시작하지도 않았는데 정답자를 클릭하지 못하게 하는 조건문
+    if (this.state.synthesis != null) {
+      this.setState({ answer: true }); // 정답버튼 활성화
+    }
   }
 
   render() {
@@ -565,7 +569,8 @@ class OpenviduDefault extends Component {
                   value={this.state.musicSelected}
                   onChange={this.handleMusicSelected}
                   labelledBy={"노래를 골라주세요."}
-                  isCreatable={true}
+                  //isCreatable={true}
+                  hasSelectAll={false}
                 />
                 <ShowParticipant>0/5</ShowParticipant>
               </div>
@@ -589,7 +594,6 @@ class OpenviduDefault extends Component {
                   winnerName={this.state.winnerName}
                   answer={this.state.answer}
                   handlePlayMusic={this.handlePlayMusic}
-                  // onClick={this.handlePlayMusic}
                 >
                   정답
                 </GameResultDialog>

@@ -45,7 +45,10 @@ export default function AlertDialogSlide(props) {
         <DialogTitle>{"🎉 게임 결과 🎉"}</DialogTitle>
         <DialogContent>
           {/* <GameResultTable id="alert-dialog-slide-description" /> */}
-          <p>{props.winnerName} 승리!</p>
+          <p>
+            <span style={{ color: "#80FFDB" }}>{props.winnerName}</span>
+            <span style={{ color: "white" }}>승리!</span>
+          </p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>닫기</Button>
