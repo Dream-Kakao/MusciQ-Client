@@ -13,7 +13,7 @@ import "./Openvidu.css";
 import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost/api/v1/";
+  process.env.NODE_ENV === "production" ? "" : "https://drkko.site/";
 
 // !logic
 class OpenviduDefault extends Component {
