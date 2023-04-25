@@ -16,7 +16,10 @@ import RoomListContainer from "./components/room/RoomListContainer";
 const theme = createTheme({
   typography: {
     fontFamily: "'NeoDunggeunmo Pro', serif"
-  }
+  },
+  palette: {
+    mode: 'dark',
+  },
 });
 
 const App = () => {
