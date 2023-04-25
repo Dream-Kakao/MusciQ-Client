@@ -1,5 +1,6 @@
 # 베이스 이미지
-FROM node:18.16.0 AS build
+#FROM node:18.16.0 AS build
+FROM node:alpine as builder
 
 # 애플리케이션 빌드를 위해 작업 디렉토리를 생성합니다.
 WORKDIR /app
