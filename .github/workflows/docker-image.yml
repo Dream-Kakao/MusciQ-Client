@@ -1,0 +1,60 @@
+name: Docker(React-Node with Nginx) Image CI/CD 
+
+on:
+  push:
+    branches: [ "main" ]
+    
+  pull_request:
+    branches: [ "main" ]
+    
+env:
+  COMMIT_HASH: ${{ github.sha }}
+  BEFORE_COMMIT_HASH: ${{ github.event.before }}
+  USER_NAME_GIT: ${{secrets.USER_NAME_GIT}}
+  USER_EMAIL_GIT: ${{secrets.USER_EMAIL_GIT}}
+  GITHUB_TOKEN: ${{secrets.PERMISSION}}
+  
+  DOCKER_REGISTRY: docker.io
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  IMAGE_NAME: musicq-client
+  DOCKER_BUILD_CONTEXT: .
+  
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest 
+    steps:
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ env.DOCKER_PASSWORD }}
+
+    - uses: actions/checkout@v2
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ${{ env.DOCKER_BUILD_CONTEXT }}
+        push: true
+        tags:
+          # P.S 채윤이가 시킴
+          ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
+          #${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Clone MusicQ-manifest Git repository
+      uses: actions/checkout@v2
+      with:
+        repository: Dream-Kakao/MusicQ-manifest
+        path: /home/runner/work/MusicQ-Client/MusicQ-Client
+        token: ${{ env.GITHUB_TOKEN }}
+          
+    - name: Update the tag in MusicQ-manifest Git repository
+      run: |
+        docker images &&
+        cd /home/runner/work/MusicQ-Client/MusicQ-Client &&
+        cd drkkoProd &&
+        sed -i "s|${DOCKER_USERNAME}/${IMAGE_NAME}:${BEFORE_COMMIT_HASH}|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g; s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g" deploy-client.yml &&
+        git config --global user.email "${USER_EMAIL_GIT}" &&
+        git config --global user.name "${USER_NAME_GIT}" &&  
+        git commit -am "Update image tag" &&
+        git push
