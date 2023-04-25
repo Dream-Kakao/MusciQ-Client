@@ -26,7 +26,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
 # 컨테이너 외부에서 액세스할 수 있도록 포트를 오픈합니다.
-EXPOSE 3500
+EXPOSE 80
 
 # Nginx를 실행합니다.
 CMD ["nginx", "-g", "daemon off;"]
