@@ -41,6 +41,12 @@ jobs:
           ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_HASH }}
           #${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
 
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ env.DOCKER_PASSWORD }}
+        
     - name: Clone MusicQ-manifest Git repository
       uses: actions/checkout@v2
       with:
@@ -57,4 +63,4 @@ jobs:
         git config --global user.email "${USER_EMAIL_GIT}" &&
         git config --global user.name "${USER_NAME_GIT}" &&  
         git commit -am "Update image tag" &&
-        git push
+        git push 
