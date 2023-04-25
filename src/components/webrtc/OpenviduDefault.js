@@ -380,18 +380,18 @@ class OpenviduDefault extends Component {
     const musicSelected = this.state.musicSelected;
     const synthesis = this.state.synthesis;
 
+    // 선택된 노래가 없는 경우 alert
+    if (musicSelected.length === 0) {
+      alert("선택된 노래가 없어요🙈");
+      return;
+    }
+
     // 가사 정지
     synthesis.cancel();
 
     // 위너 띄우기
     // todo winnerName을 모달창에 띄워주면될듯
     console.log(this.state.winnerName);
-
-    // 선택된 노래가 없는 경우 alert
-    if (musicSelected.length === 0) {
-      alert("선택된 노래가 없어요🙈");
-      return;
-    }
 
     player.playVideo();
 
@@ -411,6 +411,7 @@ class OpenviduDefault extends Component {
   }
 
   render() {
+    const winnerName = this.props;
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
     const playlist = this.state.playlist;
@@ -535,7 +536,7 @@ class OpenviduDefault extends Component {
             <S.YoutubeWrapper hidden>
               <Youtube
                 id="iframe"
-                videoId={playlist[0]}
+                videoId={playlist}
                 opts={{
                   width: 400,
                   height: 300,
@@ -584,16 +585,19 @@ class OpenviduDefault extends Component {
                     게임시작
                   </ReadyButton>
                 ) : null}
-                <AnswerButton
+                <GameResultDialog
+                  winnerName={this.state.winnerName}
                   disabled={this.state.answer === false}
                   onClick={this.handlePlayMusic}
                 >
                   정답
-                </AnswerButton>
+                </GameResultDialog>
+
+
+
                 <ExitButton variant="outlined" onClick={this.leaveSession}>
                   나가기
                 </ExitButton>
-                <GameResultDialog />
               </div >
             </AllElements >
           </div >
