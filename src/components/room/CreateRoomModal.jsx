@@ -31,8 +31,6 @@ export default function FormDialog() {
         {},
         { withCredentials: true }
       );
-      console.log(sessionId);
-      console.log(sessionId.data);
       setSessionId(sessionId.data);
     } catch (error) {
       console.log(error);
@@ -53,28 +51,8 @@ export default function FormDialog() {
 
   const handleCreate = async () => {
     try {
-      const requestBody = {
-        roomTitle: roomName,
-        gameName: gameType,
-      };
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/create/${sessionId}`,
-        requestBody,
-        { withCredentials: true }
-      );
-      console.log(response);
-      console.log(response.data);
+      localStorage.setItem("sessionID", sessionId);
       setOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/enter/${sessionId}`,
-        {},
-        { withCredentials: true }
-      );
       navigate("/openvidu");
     } catch (error) {
       console.log(error);
