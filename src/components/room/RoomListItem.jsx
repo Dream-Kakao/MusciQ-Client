@@ -1,5 +1,24 @@
 import styled from 'styled-components';
 
+// 방 입장 메서드
+const onClickRoom = () => {
+  alert("방 입장 페이지 만들어줘 이이잉 ~")
+}
+
+const RoomListItem = (props) => {
+  const { roomId, gameName, roomTitle } = props;
+
+  return (
+    <RoomListItemContainer onClick={onClickRoom}>
+      <div>Room ID    :  {roomId}</div>
+      <div>Game Name  :  {gameName}</div>
+      <div>Room Title :  {roomTitle}</div>
+    </RoomListItemContainer>
+  );
+};
+
+export default RoomListItem;
+
 const RoomListItemContainer = styled.div`
   background-color: #64DFDF;
   display: flex;
@@ -22,22 +41,3 @@ const RoomListItemContainer = styled.div`
     margin-left: 4%;
   }
 `;
-
-// 방 입장 메서드
-const onClickRoom = () => {
-    alert("방 입장 페이지 만들어줘 이이잉 ~")
-}
-
-const RoomListItem = (props) => {
-    const { roomId, gameName, roomTitle } = props;
-
-    return (
-        <RoomListItemContainer onClick={onClickRoom}>
-            <div>Room ID    :  {roomId}</div>
-            <div>Game Name  :  {gameName}</div>
-            <div>Room Title :  {roomTitle}</div>
-        </RoomListItemContainer>
-    );
-};
-
-export default RoomListItem;
