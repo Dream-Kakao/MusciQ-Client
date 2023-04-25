@@ -43,8 +43,6 @@ const Button = styled.button`
   color: #6930c3;
   border: none;
   padding: 10px 20px;
-  margin-left: 12%; /* 변경된 부분 */
-  margin-right: 12%;
   cursor: pointer;
   border-radius: 100px;
   &:hover {
