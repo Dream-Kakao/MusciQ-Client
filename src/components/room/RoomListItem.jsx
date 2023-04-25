@@ -1,15 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 
-// 방 입장 메서드
-const onClickRoom = () => {
-  alert("방 입장 페이지 만들어줘 이이잉 ~")
-}
-
 const RoomListItem = (props) => {
+  const navigate = useNavigate();
   const { roomId, gameName, roomTitle } = props;
 
+  // 방 입장 메서드
+  const onClickRoom = (roomId) => {
+    localStorage.setItem("sessionID", roomId);
+    navigate('/openvidu');
+  };
+
   return (
-    <RoomListItemContainer onClick={onClickRoom}>
+    <RoomListItemContainer onClick={() => onClickRoom(roomId)}>
       <div>Room ID    :  {roomId}</div>
       <div>Game Name  :  {gameName}</div>
       <div>Room Title :  {roomTitle}</div>
