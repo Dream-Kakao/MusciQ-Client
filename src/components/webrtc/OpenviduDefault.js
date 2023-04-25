@@ -3,13 +3,14 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
 import axios from "axios";
 import Youtube from "react-youtube";
-import { withRouter } from "react-router-dom";
 
 import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
-import { Button, Box } from "@material-ui/core";
+import { Box } from "@material-ui/core";
+
 import "./Openvidu.css";
 
+import GameResultDialog from "./GameResultDialog";
 import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
@@ -379,6 +380,12 @@ class OpenviduDefault extends Component {
     const musicSelected = this.state.musicSelected;
     const synthesis = this.state.synthesis;
 
+    // 선택된 노래가 없는 경우 alert
+    if (musicSelected.length === 0) {
+      alert("선택된 노래가 없어요🙈");
+      return;
+    }
+
     // 가사 정지
     synthesis.cancel();
 
@@ -386,15 +393,9 @@ class OpenviduDefault extends Component {
     // todo winnerName을 모달창에 띄워주면될듯
     console.log(this.state.winnerName);
 
-    // 선택된 노래가 없는 경우 alert
-    if (musicSelected.length === 0) {
-      alert("선택된 노래가 없어요🙈");
-      return;
-    }
-
     player.playVideo();
 
-    // // musicIndex를 1 증가 시킴(다음 노래 준비)
+    //  musicIndex를 1 증가 시킴(다음 노래 준비)
     // this.setState((prev) => ({
     //   musicIndex: (prev.musicIndex + 1) % musicSelected.length,
     // }));
@@ -406,10 +407,15 @@ class OpenviduDefault extends Component {
     const winnerName = subscribers[i].stream.connection.data;
 
     this.setState({ winnerName: JSON.parse(winnerName).clientData }); // 정답자 이름
-    this.setState({ answer: true }); // 정답버튼 활성화
+
+    // 게임을 시작하지도 않았는데 정답자를 클릭하지 못하게 하는 조건문
+    if (this.state.synthesis != null) {
+      this.setState({ answer: true }); // 정답버튼 활성화
+    }
   }
 
   render() {
+    const winnerName = this.props;
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
     const playlist = this.state.playlist;
@@ -534,7 +540,7 @@ class OpenviduDefault extends Component {
             <S.YoutubeWrapper hidden>
               <Youtube
                 id="iframe"
-                videoId={playlist[0]}
+                videoId={playlist}
                 opts={{
                   width: 400,
                   height: 300,
@@ -563,7 +569,8 @@ class OpenviduDefault extends Component {
                   value={this.state.musicSelected}
                   onChange={this.handleMusicSelected}
                   labelledBy={"노래를 골라주세요."}
-                  isCreatable={true}
+                  //isCreatable={true}
+                  hasSelectAll={false}
                 />
                 <ShowParticipant>0/5</ShowParticipant>
               </div>
@@ -583,12 +590,14 @@ class OpenviduDefault extends Component {
                     게임시작
                   </ReadyButton>
                 ) : null}
-                <AnswerButton
-                  disabled={this.state.answer === false}
-                  onClick={this.handlePlayMusic}
+                <GameResultDialog
+                  winnerName={this.state.winnerName}
+                  answer={this.state.answer}
+                  handlePlayMusic={this.handlePlayMusic}
                 >
                   정답
-                </AnswerButton>
+                </GameResultDialog>
+
                 <ExitButton variant="outlined" onClick={this.leaveSession}>
                   나가기
                 </ExitButton>

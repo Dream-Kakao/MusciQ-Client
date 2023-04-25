@@ -6,7 +6,7 @@ import styled from "styled-components";
 import InputField from "./InputField";
 import InputWithButton from "./InputWithButton";
 
-// !style
+// style
 const SignUpForm = styled.form`
   display: flex;
   flex-direction: column;
