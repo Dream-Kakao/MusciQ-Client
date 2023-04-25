@@ -14,6 +14,98 @@ import Select from "@mui/material/Select";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+export default function FormDialog() {
+  const [open, setOpen] = useState(false); // Dialog의 open 여부를 관리하는 state 변수
+  const [roomName, setRoomName] = useState(""); // 방 제목을 관리하는 state 변수
+  const [gameType, setGameType] = useState("낭독퀴즈"); // 게임 종류를 관리하는 state 변수
+  const [sessionId, setSessionId] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleClickOpen = async () => {
+    setOpen(true); // 모달창 먼저 열기
+
+    try {
+      const sessionId = await axios.post(
+        `${process.env.REACT_APP_API_URL_V1}rooms/create`,
+        {},
+        { withCredentials: true }
+      );
+      setSessionId(sessionId.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleGameTypeChange = (e) => {
+    setGameType(e.target.value);
+  };
+
+  const handleRoomNameChange = (e) => {
+    setRoomName(e.target.value);
+  };
+
+  const handleCreate = async () => {
+    try {
+      localStorage.setItem("sessionID", sessionId);
+      setOpen(false);
+      navigate("/openvidu");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const isRoomNameEmpty = roomName === "";
+
+  return (
+    <div>
+      <CreateRoomButton variant="outlined" onClick={handleClickOpen}>
+        방 생성
+      </CreateRoomButton>
+      <CustomDialog open={open} onClose={handleClose}>
+        <DialogTitle>방 생성</DialogTitle>
+        <DialogContent>
+          <RoomName
+            autoFocus
+            margin="dense"
+            id="roomName"
+            label="방 제목"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={roomName}
+            onChange={handleRoomNameChange}
+          />
+          <Box sx={{ minWidth: 120 }}>
+            <StyledFormControl fullWidth>
+              <InputLabel id="gameType">게임장르</InputLabel>
+              <StyledSelect
+                labelId="gameType"
+                id="gameSelect"
+                value={gameType}
+                label="게임종류"
+                onChange={handleGameTypeChange}
+              >
+                <StyledMenuItem value={"낭독퀴즈"}>낭독퀴즈</StyledMenuItem>
+              </StyledSelect>
+            </StyledFormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <DialogCreateButton onClick={handleCreate} disabled={isRoomNameEmpty}>
+            생성
+          </DialogCreateButton>
+          <DialogCancelButton onClick={handleClose}>취소</DialogCancelButton>
+        </DialogActions>
+      </CustomDialog>
+    </div>
+  );
+}
+
 const StyledMenuItem = styled(MenuItem)`
   && {
     color: #64dfdf;
@@ -171,117 +263,3 @@ const RoomName = styled(TextField)`
 
   margin-bottom: 20px;
 `;
-
-export default function FormDialog() {
-  const [open, setOpen] = useState(false); // Dialog의 open 여부를 관리하는 state 변수
-  const [roomName, setRoomName] = useState(""); // 방 제목을 관리하는 state 변수
-  const [gameType, setGameType] = useState("낭독퀴즈"); // 게임 종류를 관리하는 state 변수
-  const [sessionId, setSessionId] = useState("");
-
-  const navigate = useNavigate();
-
-  const handleClickOpen = async () => {
-    setOpen(true); // 모달창 먼저 열기
-
-    try {
-      const sessionId = await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/create`,
-        {},
-        { withCredentials: true }
-      );
-      console.log(sessionId);
-      console.log(sessionId.data);
-      setSessionId(sessionId.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleGameTypeChange = (e) => {
-    setGameType(e.target.value);
-  };
-
-  const handleRoomNameChange = (e) => {
-    setRoomName(e.target.value);
-  };
-
-  const handleCreate = async () => {
-    try {
-      const requestBody = {
-        roomTitle: roomName,
-        gameName: gameType,
-      };
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/create/${sessionId}`,
-        requestBody,
-        { withCredentials: true }
-      );
-      console.log(response);
-      console.log(response.data);
-      setOpen(false);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL_V1}rooms/enter/${sessionId}`,
-        {},
-        { withCredentials: true }
-      );
-      navigate("/openvidu");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const isRoomNameEmpty = roomName === "";
-
-  return (
-    <div>
-      <CreateRoomButton variant="outlined" onClick={handleClickOpen}>
-        방 생성
-      </CreateRoomButton>
-      <CustomDialog open={open} onClose={handleClose}>
-        <DialogTitle>방 생성</DialogTitle>
-        <DialogContent>
-          <RoomName
-            autoFocus
-            margin="dense"
-            id="roomName"
-            label="방 제목"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={roomName}
-            onChange={handleRoomNameChange}
-          />
-          <Box sx={{ minWidth: 120 }}>
-            <StyledFormControl fullWidth>
-              <InputLabel id="gameType">게임장르</InputLabel>
-              <StyledSelect
-                labelId="gameType"
-                id="gameSelect"
-                value={gameType}
-                label="게임종류"
-                onChange={handleGameTypeChange}
-              >
-                <StyledMenuItem value={"낭독퀴즈"}>낭독퀴즈</StyledMenuItem>
-              </StyledSelect>
-            </StyledFormControl>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <DialogCreateButton onClick={handleCreate} disabled={isRoomNameEmpty}>
-            생성
-          </DialogCreateButton>
-          <DialogCancelButton onClick={handleClose}>취소</DialogCancelButton>
-        </DialogActions>
-      </CustomDialog>
-    </div>
-  );
-}

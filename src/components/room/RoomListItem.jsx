@@ -1,4 +1,26 @@
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+
+const RoomListItem = (props) => {
+  const navigate = useNavigate();
+  const { roomId, gameName, roomTitle } = props;
+
+  // 방 입장 메서드
+  const onClickRoom = (roomId) => {
+    localStorage.setItem("sessionID", roomId);
+    navigate('/openvidu');
+  };
+
+  return (
+    <RoomListItemContainer onClick={() => onClickRoom(roomId)}>
+      <div>Room ID    :  {roomId}</div>
+      <div>Game Name  :  {gameName}</div>
+      <div>Room Title :  {roomTitle}</div>
+    </RoomListItemContainer>
+  );
+};
+
+export default RoomListItem;
 
 const RoomListItemContainer = styled.div`
   background-color: #64DFDF;
@@ -22,22 +44,3 @@ const RoomListItemContainer = styled.div`
     margin-left: 4%;
   }
 `;
-
-// 방 입장 메서드
-const onClickRoom = () => {
-    alert("방 입장 페이지 만들어줘 이이잉 ~")
-}
-
-const RoomListItem = (props) => {
-    const { roomId, gameName, roomTitle } = props;
-
-    return (
-        <RoomListItemContainer onClick={onClickRoom}>
-            <div>Room ID    :  {roomId}</div>
-            <div>Game Name  :  {gameName}</div>
-            <div>Room Title :  {roomTitle}</div>
-        </RoomListItemContainer>
-    );
-};
-
-export default RoomListItem;

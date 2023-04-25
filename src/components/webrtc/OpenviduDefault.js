@@ -3,7 +3,6 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideoComponent from "./UserVideoComponent";
 import axios from "axios";
 import Youtube from "react-youtube";
-
 import styled from "styled-components";
 import { MultiSelect } from "react-multi-select-component";
 import { Box } from "@material-ui/core";
@@ -24,8 +23,8 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: "SessionC",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      mySessionId: localStorage.getItem("sessionId") || "SessionA",
+      myUserName: localStorage.getItem("userID") || "Participant" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
@@ -234,10 +233,13 @@ class OpenviduDefault extends Component {
       session: undefined,
       subscribers: [],
       mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      myUserName: localStorage.getItem("UserID"),
       mainStreamManager: undefined,
       publisher: undefined,
     });
+
+    localStorage.removeItem("sessionID");
+    window.location.replace('roomlist');
   }
 
   async switchCamera() {
@@ -436,51 +438,7 @@ class OpenviduDefault extends Component {
       // join session 하는 페이지. 추 후에 지워야 됨.
       // todo container로 잡혀있기 때문에 자동으로 width가 85% 로 줄어들게 됨. 추 후에 이 부분만 줄이던가 해야될듯?
       <div className="container">
-        {this.state.session === undefined ? (
-          <div id="join">
-            <div id="img-div">
-              <img
-                src="resources/images/openvidu_grey_bg_transp_cropped.png"
-                alt="OpenVidu logo"
-              />
-            </div>
-            <div id="join-dialog" className="jumbotron vertical-center">
-              <h1> Join a video session </h1>
-              <form className="form-group" onSubmit={this.joinSession}>
-                <p>
-                  <label>Participant: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="userName"
-                    value={myUserName}
-                    onChange={this.handleChangeUserName}
-                    required
-                  />
-                </p>
-                <p>
-                  <label> Session: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="sessionId"
-                    value={mySessionId}
-                    onChange={this.handleChangeSessionId}
-                    required
-                  />
-                </p>
-                <p className="text-center">
-                  <input
-                    className="btn btn-lg btn-success"
-                    name="commit"
-                    type="submit"
-                    value="JOIN"
-                  />
-                </p>
-              </form>
-            </div>
-          </div>
-        ) : null}
+        {this.state.session === undefined ? this.joinSession() : null}
 
         {/* 세션을 보여주는 페이지
           this.state.session이 없다면 페이지를 보여주면 안된다. */}
