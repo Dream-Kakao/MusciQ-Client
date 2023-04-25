@@ -54,7 +54,7 @@ jobs:
         cd /home/runner/work/MusicQ-Client/MusicQ-Client &&
         ls &&
         cd drkkoProd &&
-        sed -i "s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g; s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g" r-deploy.yml &&
+        sed -i "s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g; s|${DOCKER_USERNAME}/${IMAGE_NAME}:latest|${DOCKER_USERNAME}/${IMAGE_NAME}:${COMMIT_HASH}|g" deploy-client.yml &&
         ls &&
         git config --global user.email "${USER_EMAIL_GIT}" &&
         git config --global user.name "${USER_NAME_GIT}" &&  
