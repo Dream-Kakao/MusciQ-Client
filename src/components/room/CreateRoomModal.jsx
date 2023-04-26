@@ -51,6 +51,17 @@ export default function FormDialog() {
 
   const handleCreate = async () => {
     try {
+      const requestBody = {
+        roomTitle: roomName,
+        gameName: gameType,
+      };
+
+      await axios.post(
+        `${process.env.REACT_APP_API_URL_V1}rooms/create/${sessionId}`,
+        requestBody,
+        { withCredentials: true }
+      );
+
       localStorage.setItem("sessionID", sessionId);
       setOpen(false);
       navigate("/openvidu");
