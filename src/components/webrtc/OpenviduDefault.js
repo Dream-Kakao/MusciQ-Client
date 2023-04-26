@@ -24,7 +24,9 @@ class OpenviduDefault extends Component {
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
       mySessionId: localStorage.getItem("sessionId") || "SessionA",
-      myUserName: localStorage.getItem("userID") || "Participant" + Math.floor(Math.random() * 100),
+      myUserName:
+        localStorage.getItem("userID") ||
+        "Participant" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
@@ -239,7 +241,7 @@ class OpenviduDefault extends Component {
     });
 
     localStorage.removeItem("sessionID");
-    window.location.replace('roomlist');
+    window.location.replace("roomlist");
   }
 
   async switchCamera() {
@@ -530,7 +532,9 @@ class OpenviduDefault extends Component {
                   //isCreatable={true}
                   hasSelectAll={false}
                 />
-                <ShowParticipant>0/5</ShowParticipant>
+                <ShowParticipant>
+                  {this.state.subscribers.length + 1}/6
+                </ShowParticipant>
               </div>
               <div
                 style={{
