@@ -117,7 +117,6 @@ function Modify() {
                 return res.json()
               })
               .then((res) => {
-                console.log(res)
                 alert("회원정보가 정상적으로 변경되었습니다.")
               })
               .catch((err) => {
@@ -153,7 +152,6 @@ function Modify() {
             return res.json()
           })
           .then((res) => {
-            console.log(res)
             alert("회원정보가 정상적으로 변경되었습니다.")
           })
           .catch((err) => {
@@ -263,9 +261,6 @@ function Modify() {
       })
         .then((res) => {
           return res.json()
-        })
-        .then((res) => {
-          console.log(res)
         })
         .then(
           fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {

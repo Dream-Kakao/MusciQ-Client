@@ -6,46 +6,6 @@ import styled from "styled-components";
 import InputField from "./InputField";
 import InputWithButton from "./InputWithButton";
 
-// style
-const SignUpForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const SignupButton = styled.button`
-  background-color: #64dfdf;
-  width: 140px;
-  height: 50px;
-  color: #6930c3;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 23px;
-  font-weight: 800;
-
-  &:hover:not(:disabled) {
-    background-color: #80ffdb;
-  }
-
-  &:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-`;
-
-const TextButton = styled.button`
-  background-color: transparent;
-  border: none;
-  margin-bottom: 10px;
-  color: #64dfdf;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 1rem;
-`;
-
 // !logic
 function SignUp() {
   useEffect(() => {
@@ -56,10 +16,9 @@ function SignUp() {
     if (expiration && currentTime > parseInt("AuthExpiration")) {
       localStorage.removeItem("Auth"); // Access Token 제거
       localStorage.removeItem("AuthExpiration");
-    } 
+    }
     const accessToken = localStorage.getItem("Auth")
-    console.log(accessToken)
-    if(accessToken != null){
+    if (accessToken != null) {
       window.location.replace("/login")
     }
   }, []);
@@ -297,7 +256,6 @@ function SignUp() {
     ) {
       handleDataPost(joinData);
     } else {
-      console.log("id, email, nickname, password 중에 문제있음");
       alert("회원가입에 실패하였습니다. 다시 확인해 주세요.");
     }
   };
@@ -312,9 +270,7 @@ function SignUp() {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res, "회원가입 성공");
         alert("회원가입 성공! 🎉");
-
         navigate("/login");
       })
       .catch((err) => {
@@ -387,3 +343,43 @@ function SignUp() {
 }
 
 export default SignUp;
+
+// style
+const SignUpForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const SignupButton = styled.button`
+  background-color: #64dfdf;
+  width: 140px;
+  height: 50px;
+  color: #6930c3;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 23px;
+  font-weight: 800;
+
+  &:hover:not(:disabled) {
+    background-color: #80ffdb;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+`;
+
+const TextButton = styled.button`
+  background-color: transparent;
+  border: none;
+  margin-bottom: 10px;
+  color: #64dfdf;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+`;

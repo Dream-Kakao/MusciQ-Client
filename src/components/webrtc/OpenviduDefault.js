@@ -23,7 +23,7 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: localStorage.getItem("sessionId") || "SessionA",
+      mySessionId: localStorage.getItem("sessionId") || "Session0",
       myUserName:
         localStorage.getItem("userID") ||
         "Participant" + Math.floor(Math.random() * 100),
@@ -51,6 +51,7 @@ class OpenviduDefault extends Component {
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
     this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
+    this.deleteRoom = this.deleteRoom.bind(this);
     // music
     this.handleMusicSelected = this.handleMusicSelected.bind(this);
     // youtube
@@ -72,7 +73,6 @@ class OpenviduDefault extends Component {
     })
       .then((response) => {
         this.setState({ musics: response.data });
-        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -115,6 +115,17 @@ class OpenviduDefault extends Component {
       this.setState({
         subscribers: subscribers,
       });
+    }
+  }
+
+  async deleteRoom(sessionId) {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL_V1}rooms/delete/${sessionId}`,
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -224,9 +235,16 @@ class OpenviduDefault extends Component {
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
 
     const mySession = this.state.session;
+    const subscribers = this.state.subscribers;
+    const mySessionId = localStorage.getItem("sessionID");
 
     if (mySession) {
       mySession.disconnect();
+    }
+
+    // 남은 인원이 호스트 제외하고 없으면 DB에서 방 데이터 삭제
+    if (subscribers.length == 0) {
+      this.deleteRoom(mySessionId);
     }
 
     // Empty all properties...
@@ -234,7 +252,7 @@ class OpenviduDefault extends Component {
     this.setState({
       session: undefined,
       subscribers: [],
-      mySessionId: "SessionA",
+      mySessionId: "Session0",
       myUserName: localStorage.getItem("UserID"),
       mainStreamManager: undefined,
       publisher: undefined,
@@ -298,8 +316,6 @@ class OpenviduDefault extends Component {
           resolve();
         });
       });
-
-      console.log("한 라운드 끝");
     }
   }
 
@@ -314,11 +330,9 @@ class OpenviduDefault extends Component {
       })
       .then((res) => {
         const data = res.data;
-        console.log(data);
 
         // 가사 얻어오기
         const lyric = data[musicId];
-        console.log(lyric);
 
         // 음성 합성 API
         const synthesis = window.speechSynthesis;
@@ -338,7 +352,6 @@ class OpenviduDefault extends Component {
           synthesis.speak(utterance);
 
           utterance.onend = () => {
-            console.log("음성 재생 끝");
             resolve();
           };
         });
@@ -362,8 +375,6 @@ class OpenviduDefault extends Component {
 
     // musicSelected 배열의 마지막 원소
     const music = musicSelected[musicSelected.length - 1];
-    console.log(music);
-
     const playlist = JSON.parse(music.value).videoId;
 
     this.setState({
@@ -392,10 +403,6 @@ class OpenviduDefault extends Component {
 
     // 가사 정지
     synthesis.cancel();
-
-    // 위너 띄우기
-    // todo winnerName을 모달창에 띄워주면될듯
-    console.log(this.state.winnerName);
 
     player.playVideo();
 
