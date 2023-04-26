@@ -1,33 +1,20 @@
-# 베이스 이미지
 #FROM node:18.16.0 AS build
-FROM node:alpine AS build
+FROM node:16-alpine
 
-# 애플리케이션 빌드를 위해 작업 디렉토리를 생성합니다.
+# 경로 설정하기
 WORKDIR /app
 
-# package.json과 yarn.lock을 복사합니다.
-COPY package*.json yarn.lock ./
+# package.json 워킹 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
+COPY package.json .
 
-# 패키지 설치를 위해 yarn을 실행합니다.
+# image layer 에 의존성을 설치
 RUN yarn install
 
-# 소스코드를 복사합니다.
+# 현재 디렉토리의 모든 파일을 도커 컨테이너의 워킹 디렉토리에 복사
 COPY . .
 
-# 애플리케이션을 빌드합니다.
-RUN yarn build
+# 3000번 포트 노출
+EXPOSE 3000
 
-# Nginx 이미지를 베이스 이미지로 변경합니다.
-FROM nginx:latest
-
-# Nginx 설정 파일을 복사합니다.
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# 애플리케이션 빌드 결과물을 Nginx의 HTML 디렉토리에 복사합니다.
-COPY --from=build /app/build /usr/share/nginx/html
-
-# 컨테이너 외부에서 액세스할 수 있도록 포트를 오픈합니다.
-EXPOSE 80
-
-# Nginx를 실행합니다.
-CMD ["nginx", "-g", "daemon off;"]
+# build 폴더를 serve합니다.
+CMD ["yarn", "start"]
