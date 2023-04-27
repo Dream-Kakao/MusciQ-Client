@@ -82,7 +82,7 @@ function SignUp() {
 
   // !method
   const onClickGotoLogin = () => {
-    navigate("/login");
+    navigate("/");
   };
 
   // id 유효성 검사, 중복 검사
