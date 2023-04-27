@@ -27,6 +27,7 @@ function SignUp() {
   const [formData, setFormData] = useState({
     id: "",
     email: "",
+    emailAuth: "",
     nickname: "",
     password: "",
     passwordConfirm: "",
@@ -35,6 +36,7 @@ function SignUp() {
   // 에러 상태 초기화
   const [idError, setIdError] = useState(false); // id 중복 에러
   const [emailError, setEmailError] = useState(false); // 이메일 중복 에러
+  const [emailAuthError, setEmailAuthError] = useState(false); // 이메일 인증코드 에러
   const [nicknameError, setNicknameError] = useState(false); // 닉네임 중복 에러
   const [passwordStateError, setPasswordStateError] = useState(false); // 비밀번호 조건에 안맞을때
   const [passwordError, setPasswordError] = useState(false); // 비밀번호 확인이 틀렸을때
@@ -42,6 +44,7 @@ function SignUp() {
   // 에러 메세지 초기화
   const [idErrorMessage, setIdErrorMessage] = useState("");
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
+  const [emailAuthErrorMessage, setEmailAuthErrorMessage] = useState("");
   const [nicknameErrorMessage, setNicknameErrorMessage] = useState("");
   const [passwordStateErrorMessage, setPasswordStateErrorMessage] =
     useState("");
@@ -50,16 +53,21 @@ function SignUp() {
   // 사용 가능 메세지 초기화
   const [idOkMessage, setIdOkMessage] = useState("");
   const [emailOkMessage, setEmailOkMessage] = useState("");
+  const [emailAuthOkMessage, setEmailAuthOkMessage] = useState("")
   const [nicknameOkMessage, setNicknameOkMessage] = useState("");
 
   // 회원 가입 버튼 활성화 유무
   const [ok, setOk] = useState(false);
+
+  // 이메일 인증 코드 값
+  const [authCode, setAuthCode] = useState(null);
 
   // formData에 입력 값들이 모두 존재하면 ok 값을 true로 변경
   useEffect(() => {
     if (
       formData.id &&
       formData.email &&
+      formData.emailAuth &&
       formData.nickname &&
       formData.password &&
       formData.passwordConfirm
@@ -145,10 +153,24 @@ function SignUp() {
         // email 중복되지 않음
         const jsonRes = res.data;
 
-
         setEmailError(false);
         setEmailOkMessage("사용 가능 😆");
       })
+      .then(
+        axios.get(`${process.env.REACT_APP_API_URL_V1}members/email/authentication/${email}`)
+        .then((res) => {
+          const jsonRes = res.data;
+          if(!jsonRes.success){
+            setEmailError(true);
+            alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
+          }
+          setAuthCode(jsonRes.data)
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
+        })
+      )
       .catch((err) => {
         // email 중복됨
         const jsonRes = err.response.data;
@@ -157,6 +179,17 @@ function SignUp() {
         setEmailErrorMessage("중복된 Email 입니다.");
       });
   };
+
+  // 이메일 인증 코드 비교 검사
+  const checkEmailAuth = (emailAuth) => {
+    if(authCode != null && emailAuth === authCode){
+      setEmailAuthError(false)
+      setEmailAuthOkMessage("인증완료 😆");
+    } else{
+      setEmailAuthError(true)
+      setEmailAuthErrorMessage("인증실패 😥");
+    }
+  }
 
   // nickname 유효성 검사, 중복 검사
   const checkNickname = async (id, nickname) => {
@@ -240,16 +273,18 @@ function SignUp() {
     const joinData = {
       id: formData.id,
       email: formData.email,
+      emailAuth: formData.emailAuth,
       nickname: formData.nickname,
       password: formData.password,
       passwordConfirm: formData.passwordConfirm,
     };
 
-    const { id, email, nickname, password, passwordConfirm } = joinData;
+    const { id, email, emailAuth, nickname, password, passwordConfirm } = joinData;
 
     if (
       !idError &&
       !emailError &&
+      !emailAuthError &&
       !nicknameError &&
       validatePassword(password) &&
       equalPassword(password, passwordConfirm)
@@ -305,6 +340,17 @@ function SignUp() {
         okMessage={emailOkMessage}
         onChange={handleInputChange}
         onClick={() => checkEmail(formData.email)}
+      />
+      <InputWithButton
+        id="emailAuth"
+        value={formData.emailAuth}
+        type="text"
+        placeholder="인증코드"
+        error={emailAuthError}
+        errorMessage={emailAuthErrorMessage}
+        okMessage={emailAuthOkMessage}
+        onChange={handleInputChange}
+        onClick={() => checkEmailAuth(formData.emailAuth)}
       />
       <InputWithButton
         id="nickname"
