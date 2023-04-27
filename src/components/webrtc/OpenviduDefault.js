@@ -238,6 +238,10 @@ class OpenviduDefault extends Component {
     const mySession = this.state.session;
     const subscribers = this.state.subscribers;
     const mySessionId = localStorage.getItem("sessionID");
+    const synthesis = this.state.synthesis;
+
+    // 가사 정지
+    synthesis.cancel();
 
     if (mySession) {
       mySession.disconnect();
