@@ -72,6 +72,8 @@ const Login = () => {
           navigate("/roomlist")
         } else {
           console.log(res.error)
+          localStorage.removeItem("Auth")
+          localStorage.removeItem("AuthExpiration")
         }
       })
       .catch(error => {

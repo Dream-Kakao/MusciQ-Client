@@ -19,11 +19,12 @@ const Logo = styled.img`
 
 class Header extends Component {
   render() {
+    const onClickLogo = () => {
+      window.location.replace('/')
+    }
     return (
       <LogoWrapper>
-        <a href="http://localhost:3000/">
-          <Logo src={logo} />
-        </a>
+        <Logo src={logo} onClick={onClickLogo} />
       </LogoWrapper>
     );
   }

@@ -34,11 +34,10 @@ const App = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<SignUp></SignUp>} />
+                <Route path="/" element={<Login></Login>} />
+                <Route path="/signup" element={<SignUp></SignUp>} />
                 <Route path="/openvidu" element={<OpenviduDefault></OpenviduDefault>} />
                 <Route path="/roomlist" element={<RoomListContainer />} />
-                <Route path="/signup" element={<SignUp></SignUp>} />
-                <Route path="/login" element={<Login></Login>} />
                 <Route path="/mypage" element={<MyPage></MyPage>} />
                 <Route path="/modify" element={<Modify></Modify>} />
               </Routes>

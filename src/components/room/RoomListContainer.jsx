@@ -52,13 +52,13 @@ const RoomListContainer = () => {
           localStorage.removeItem("Auth");
           localStorage.removeItem("AuthExpiration");
           alert("로그 아웃 성공!");
-          navigate("/login");
+          navigate("/");
         }
       })
       .catch((err) => {
         console.log(err);
         alert("비정상 적인 요청 경로로 입장했습니다.");
-        navigate("/login");
+        navigate("/");
       });
   };
 
