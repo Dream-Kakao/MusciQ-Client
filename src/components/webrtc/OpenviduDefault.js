@@ -13,8 +13,7 @@ import GameResultDialog from "./GameResultDialog";
 import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://drkko.site/api/v1/";
-
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/api/v1/";
 // !logic
 class OpenviduDefault extends Component {
   // !초기세팅
@@ -41,7 +40,8 @@ class OpenviduDefault extends Component {
       // game
       synthesis: null, // 음성 합성 API
       winnerName: null,
-      answer: false,
+      answer: false, // 정답 버튼 활성화 유무
+      gameStart: true, // 게임 시작 버튼 활성화 유무
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -62,6 +62,7 @@ class OpenviduDefault extends Component {
     this.oneRound = this.oneRound.bind(this);
   }
 
+  // !method
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
 
@@ -237,6 +238,10 @@ class OpenviduDefault extends Component {
     const mySession = this.state.session;
     const subscribers = this.state.subscribers;
     const mySessionId = localStorage.getItem("sessionID");
+    const synthesis = this.state.synthesis;
+
+    // 가사 정지
+    synthesis.cancel();
 
     if (mySession) {
       mySession.disconnect();
@@ -300,9 +305,12 @@ class OpenviduDefault extends Component {
     }
   }
 
-  // !method
   // 게임 시작 메서드
   async playGame(selectedSongs) {
+    // 게임 시작하면 정답버튼, 게임시작버튼 비활성화
+    this.state.answer = false;
+    this.state.gameStart = false;
+
     for (const song of selectedSongs) {
       const value = song.value;
       const musicId = JSON.parse(value).musicId;
@@ -405,6 +413,9 @@ class OpenviduDefault extends Component {
     synthesis.cancel();
 
     player.playVideo();
+
+    // 게임시작버튼 활성화
+    this.setState({ gameStart: true });
 
     //  musicIndex를 1 증가 시킴(다음 노래 준비)
     // this.setState((prev) => ({
@@ -553,6 +564,7 @@ class OpenviduDefault extends Component {
               >
                 {this.state.publisher !== undefined ? (
                   <ReadyButton
+                    disabled={this.state.gameStart === false}
                     variant="contained"
                     onClick={() => this.playGame(this.state.musicSelected)}
                   >
@@ -669,21 +681,6 @@ const AllElements = styled.div`
 `;
 
 const ReadyButton = styled.button`
-  width: 100%;
-  height: 50px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  background: #6930c3;
-  font-weight: bold;
-  font-size: 20px;
-  color: #fff;
-
-  &:hover {
-    background-color: #80ffdb;
-  }
-`;
-
-const AnswerButton = styled.button`
   width: 100%;
   height: 50px;
   padding: 10px 20px;
