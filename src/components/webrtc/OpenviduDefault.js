@@ -13,7 +13,7 @@ import GameResultDialog from "./GameResultDialog";
 import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080/api/v1/";
+  process.env.NODE_ENV === "production" ? "" : "https://drkko.site/api/v1/";
 // !logic
 class OpenviduDefault extends Component {
   // !초기세팅

@@ -25,7 +25,6 @@ const RoomListContainer = () => {
       const res = JSON.parse(event.data);
 
       if (res.statusCode === "OK") {
-        console.log(res)
         setRooms(res.body.data);
         setNext(res.body.next);
         setCurPage(res.body.number);

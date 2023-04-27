@@ -76,7 +76,18 @@ function SignUp() {
     } else {
       setOk(false);
     }
-  }, [formData]);
+    let timer = null;
+
+    if (authCode !== null) {
+      timer = setTimeout(() => {
+        setAuthCode(null);
+      }, 3 * 60 * 1000); // 3분
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [formData, authCode]);
 
   // formData 핸들링
   const handleInputChange = (e) => {
@@ -155,26 +166,30 @@ function SignUp() {
 
         setEmailError(false);
         setEmailOkMessage("사용 가능 😆");
+        return jsonRes;
       })
-      .then(
-        axios.get(`${process.env.REACT_APP_API_URL_V1}members/email/authentication/${email}`)
-        .then((res) => {
-          const jsonRes = res.data;
-          if(!jsonRes.success){
-            setEmailError(true);
-            alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
-          }
-          setAuthCode(jsonRes.data)
-        })
-        .catch((err) => {
-          console.log(err);
-          alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
-        })
-      )
-      .catch((err) => {
-        // email 중복됨
-        const jsonRes = err.response.data;
+      .then((jsonRes) => {
 
+        if (jsonRes.success) {
+          axios.get(`${process.env.REACT_APP_API_URL_V1}members/email/authentication/${email}`)
+            .then((res) => {
+              const jsonRes = res.data;
+
+              if (!jsonRes.success) {
+                setEmailError(true);
+                alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
+              }
+              setAuthCode(jsonRes.data)
+
+            })
+            .catch((err) => {
+              console.log(err);
+              alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
+            })
+        }
+      })
+      .catch((err) => {
+        console.log(err)
         setEmailError(true);
         setEmailErrorMessage("중복된 Email 입니다.");
       });
@@ -182,10 +197,11 @@ function SignUp() {
 
   // 이메일 인증 코드 비교 검사
   const checkEmailAuth = (emailAuth) => {
-    if(authCode != null && emailAuth === authCode){
+    console.log(authCode)
+    if (authCode != null && emailAuth === authCode) {
       setEmailAuthError(false)
       setEmailAuthOkMessage("인증완료 😆");
-    } else{
+    } else {
       setEmailAuthError(true)
       setEmailAuthErrorMessage("인증실패 😥");
     }
