@@ -74,6 +74,8 @@ const Login = () => {
           console.log(res.error)
           localStorage.removeItem("Auth")
           localStorage.removeItem("AuthExpiration")
+          localStorage.removeItem("UserID")
+          localStorage.removeItem("UserNickName")
         }
       })
       .catch(error => {
@@ -124,6 +126,23 @@ const Login = () => {
               localStorage.setItem("UserID", inputId)
               localStorage.setItem("Auth", res.data)
               localStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
+              
+              const url = `${process.env.REACT_APP_API_URL_V1}members/member/${localStorage.getItem("UserID")}`
+              fetch(url, {
+                method: "GET",
+                credentials: 'include'
+              })
+              .then((res) => {
+                return res.json();
+              })
+              .then((res) => {
+                localStorage.setItem("UserNickName", res.data.nickname)
+              })
+              .catch((err) => {
+                console.log(err)
+                window.reload()
+              })
+
               navigate('/roomlist')
             } else {
               if (res.error === 'NOT_EXIST_ID') {
