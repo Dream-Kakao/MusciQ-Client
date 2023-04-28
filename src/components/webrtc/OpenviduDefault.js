@@ -14,6 +14,7 @@ import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
   process.env.NODE_ENV === "production" ? "" : "https://drkko.site/api/v1/";
+
 // !logic
 class OpenviduDefault extends Component {
   // !초기세팅
@@ -22,7 +23,7 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: localStorage.getItem("sessionId") || "Session0",
+      mySessionId: localStorage.getItem("sessionID") || "Session0",
       myUserName:
         localStorage.getItem("userID") ||
         "Participant" + Math.floor(Math.random() * 100),
@@ -41,7 +42,7 @@ class OpenviduDefault extends Component {
       synthesis: null, // 음성 합성 API
       winnerName: null,
       answer: false, // 정답 버튼 활성화 유무
-      gameStart: true, // 게임 시작 버튼 활성화 유무
+      gameStart: false, // 게임 시작 버튼 활성화 유무
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -241,7 +242,9 @@ class OpenviduDefault extends Component {
     const synthesis = this.state.synthesis;
 
     // 가사 정지
-    synthesis.cancel();
+    if (synthesis != null) {
+      synthesis.cancel();
+    }
 
     if (mySession) {
       mySession.disconnect();
@@ -374,9 +377,12 @@ class OpenviduDefault extends Component {
   handleMusicSelected(musicSelected) {
     // 하나만 선택되기 위해
     if (musicSelected.length > 1) {
+      // 마지막으로 고른 음악이 musicSelected에 들어간다.
       this.setState({
         musicSelected: musicSelected.slice(musicSelected.length - 1),
       });
+    } else if (musicSelected.length == 0) {
+      return;
     } else {
       this.setState({ musicSelected: musicSelected });
     }
@@ -386,6 +392,7 @@ class OpenviduDefault extends Component {
     const playlist = JSON.parse(music.value).videoId;
 
     this.setState({
+      gameStart: true,
       playlist: playlist,
     });
   }
