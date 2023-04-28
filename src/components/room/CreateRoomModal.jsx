@@ -80,7 +80,6 @@ export default function FormDialog() {
       <CustomDialog open={open} onClose={handleClose}>
         <DialogTitle>방 생성</DialogTitle>
         <DialogContent>
-          <p>{sessionId}</p>
           <RoomName
             autoFocus
             margin="dense"

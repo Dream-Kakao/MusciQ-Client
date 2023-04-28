@@ -23,7 +23,7 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: localStorage.getItem("sessionId") || "Session0",
+      mySessionId: localStorage.getItem("sessionID") || "Session0",
       myUserName:
         localStorage.getItem("userID") ||
         "Participant" + Math.floor(Math.random() * 100),
