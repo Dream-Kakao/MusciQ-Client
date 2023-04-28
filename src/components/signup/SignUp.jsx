@@ -198,7 +198,6 @@ function SignUp() {
 
   // 이메일 인증 코드 비교 검사
   const checkEmailAuth = (emailAuth) => {
-    console.log(authCode)
     if (authCode != null && emailAuth === authCode) {
       setEmailAuthError(false)
       setEmailAuthOkMessage("인증완료 😆");
