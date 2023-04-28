@@ -51,6 +51,8 @@ const RoomListContainer = () => {
         if (success) {
           localStorage.removeItem("Auth");
           localStorage.removeItem("AuthExpiration");
+          localStorage.removeItem("UserID")
+          localStorage.removeItem("UserNickname")
           alert("로그 아웃 성공!");
           navigate("/");
         }
