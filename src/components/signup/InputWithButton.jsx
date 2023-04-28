@@ -1,6 +1,34 @@
 import React from "react";
 import styled from "styled-components";
 
+function InputWithButton({
+  value,
+  onChange,
+  onClick,
+  error,
+  errorMessage,
+  okMessage,
+  ...rest
+}) {
+  return (
+    <InputWrapper>
+      <div>
+        <Input value={value} onChange={onChange} error={error} {...rest} />
+        <Button type="button" onClick={onClick}>
+          확인
+        </Button>
+      </div>
+      {error ? (
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      ) : (
+        <OkMessage>{okMessage}</OkMessage>
+      )}
+    </InputWrapper>
+  );
+}
+
+export default InputWithButton;
+
 const InputWrapper = styled.div`
   position: relative;
   display: flex;
@@ -54,31 +82,3 @@ const OkMessage = styled.span`
   color: #80ffdb;
   text-align: left;
 `;
-
-function InputWithButton({
-  value,
-  onChange,
-  onClick,
-  error,
-  errorMessage,
-  okMessage,
-  ...rest
-}) {
-  return (
-    <InputWrapper>
-      <div>
-        <Input value={value} onChange={onChange} error={error} {...rest} />
-        <Button type="button" onClick={onClick}>
-          확인
-        </Button>
-      </div>
-      {error ? (
-        <ErrorMessage>{errorMessage}</ErrorMessage>
-      ) : (
-        <OkMessage>{okMessage}</OkMessage>
-      )}
-    </InputWrapper>
-  );
-}
-
-export default InputWithButton;

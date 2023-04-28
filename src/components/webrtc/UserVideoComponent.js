@@ -5,13 +5,6 @@ import "./UserVideo.css";
 
 const UserVideoComponent = (props) => {
 
-  const Nickname = styled.div`
-    text-align: center;
-    font-weight: bold;
-    color: white;
-    font-size: 10px;
-  `;
-
   const getNicknameTag = () => {
     // Gets the nickName of the user
     return JSON.parse(props.streamManager.stream.connection.data).clientData;
@@ -32,3 +25,10 @@ const UserVideoComponent = (props) => {
 };
 
 export default UserVideoComponent;
+
+const Nickname = styled.div`
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  font-size: 10px;
+`;
