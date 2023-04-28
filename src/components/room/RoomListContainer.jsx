@@ -62,6 +62,11 @@ const RoomListContainer = () => {
       });
   };
 
+  // 마이페이지 이동 버튼
+  const onClickMypage = () => {
+    navigate("/mypage")
+  }
+
   // 다음 페이지 버튼 클릭 이벤트
   const onClickNext = async (next) => {
     if (next === true) {
@@ -100,9 +105,12 @@ const RoomListContainer = () => {
         </ArrowButton>
       </PageContainer>
       <ButtonContainer className="button-container">
-        <Button className="logout-button" onClick={onClickLogout}>
+        <Button1 className="logout-button" onClick={onClickLogout}>
           Logout
-        </Button>
+        </Button1>
+        <Button2 className="mypage-button" onClick={onClickMypage}>
+          My Page
+        </Button2>
         <CenteredText className="centered-text"></CenteredText>
         <CreateRoomModal />
       </ButtonContainer>
@@ -145,7 +153,7 @@ const ButtonContainer = styled.div`
   z-index: 1;
 `;
 
-const Button = styled.button`
+const Button1 = styled.button`
   font-weight: bold;
   background-color: #64dfdf;
   color: #6930c3;
@@ -156,6 +164,20 @@ const Button = styled.button`
   &:hover {
     background-color: #80ffdb;
   }
+`;
+
+const Button2 = styled.button`
+  font-weight: bold;
+  background-color: #64dfdf;
+  color: #6930c3;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 100px;
+  &:hover {
+    background-color: #80ffdb;
+  }
+  margin-left: 1%;
 `;
 
 const CenteredText = styled.span`
