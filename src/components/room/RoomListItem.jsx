@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const RoomListItem = (props) => {
   const navigate = useNavigate();
@@ -8,14 +8,13 @@ const RoomListItem = (props) => {
   // 방 입장 메서드
   const onClickRoom = (roomId) => {
     localStorage.setItem("sessionID", roomId);
-    navigate('/openvidu');
+    navigate("/openvidu");
   };
 
   return (
     <RoomListItemContainer onClick={() => onClickRoom(roomId)}>
-      <div>Room ID    :  {roomId}</div>
-      <div>Game Name  :  {gameName}</div>
-      <div>Room Title :  {roomTitle}</div>
+      <div>Game Name : {gameName}</div>
+      <div>Room Title : {roomTitle}</div>
     </RoomListItemContainer>
   );
 };
@@ -23,7 +22,7 @@ const RoomListItem = (props) => {
 export default RoomListItem;
 
 const RoomListItemContainer = styled.div`
-  background-color: #64DFDF;
+  background-color: #64dfdf;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -38,7 +37,7 @@ const RoomListItemContainer = styled.div`
     display: flex;
     font-weight: bold;
     font-size: 100%;
-    color: #6930C3;
+    color: #6930c3;
     width: 100%;
     text-align: left;
     margin-left: 4%;
