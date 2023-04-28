@@ -664,7 +664,6 @@ const PublisherCard = styled.div`
   height: auto;
   border-radius: 20px;
   background: #6930c3;
-  /* width: 70px; */
   margin: 1em;
   padding: 0.8em;
   box-shadow: 1px 3px 8px rgba(0, 0, 0, 100);
@@ -697,7 +696,6 @@ const ReadyButton = styled.button`
   border-radius: 5px;
   background: #6930c3;
   font-weight: bold;
-  font-size: 20px;
   color: #fff;
 
   &:hover:not(:disabled) {
@@ -717,7 +715,6 @@ const ExitButton = styled.button`
   border: 3px solid #6930c3;
   border-radius: 5px;
   font-weight: bold;
-  font-size: 20px;
   color: #fff;
 `;
 
@@ -725,6 +722,7 @@ const ShowParticipant = styled(Box)`
   && {
     width: 100%;
     height: 50px;
+    padding: 10px 20px;
     border: 3px solid #6930c3;
     border-radius: 5px;
     text-align: center;

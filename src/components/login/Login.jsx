@@ -2,60 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
 
-// style
-const LoginForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  border-radius: 5px;
-`;
-
-const TextButton = styled.button`
-  background-color: transparent;
-  border: none;
-  margin-bottom: 10px;
-  color: #64dfdf;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 1rem;
-`;
-
-const LoginInput = styled.input`
-  border: 3px solid #6930c3;
-  width: 400px;
-  padding: 10px;
-  margin-bottom: 25px;
-  border-radius: 5px;
-  background-color: #000;
-  color: #fff;
-  box-shadow: 0px 0px 5px #ccc;
-  font-size: 16px;
-`;
-
-const LoginButton = styled.button`
-  background-color: #64dfdf;
-  width: 140px;
-  height: 50px;
-  padding: 10px 20px;
-  color: #6930c3;
-  border: none;
-  border-radius: 5px;
-  font-size: 23px;
-  font-weight: 800;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background-color: #80ffdb;
-  }
-
-  &:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-`;
-
 const Login = () => {
   const navigate = useNavigate();
 
@@ -183,3 +129,57 @@ const Login = () => {
 }
 
 export default Login;
+
+// style
+const LoginForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 5px;
+`;
+
+const TextButton = styled.button`
+  background-color: transparent;
+  border: none;
+  margin-bottom: 10px;
+  color: #64dfdf;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 1rem;
+`;
+
+const LoginInput = styled.input`
+  border: 3px solid #6930c3;
+  width: 400px;
+  padding: 10px;
+  margin-bottom: 25px;
+  border-radius: 5px;
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0px 0px 5px #ccc;
+  font-size: 16px;
+`;
+
+const LoginButton = styled.button`
+  background-color: #64dfdf;
+  width: 140px;
+  height: 50px;
+  padding: 10px 20px;
+  color: #6930c3;
+  border: none;
+  border-radius: 5px;
+  font-size: 23px;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: #80ffdb;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+`;

@@ -1,21 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 
-// style
-import "./Footer.css";
-
-const FooterWrapper = styled.div`
-  width: 100%;
-  // height: 15%;
-  max-height: 25%;
-  bottom: 0px;
-  position: relative;
-  border-top: 3px solid #252525;
-  margin-top: 25px;
-  padding-top: 15px;
-  font-size: 11px;
-`;
-
 const Footer = () => {
   return (
     <FooterWrapper>
@@ -48,10 +33,25 @@ const Footer = () => {
         <span>정채윤: chxrryda@gmail.com</span>
         <br />
         <br />
-        <span>Copyright 2020. cocoder. All Rights Reserved.</span>
+        <span>Copyright 2023. DRKKO. All Rights Reserved.</span>
       </p>
     </FooterWrapper>
   );
 };
 
 export default Footer;
+
+// style
+import "./Footer.css";
+
+const FooterWrapper = styled.div`
+  width: 100%;
+  // height: 15%;
+  max-height: 25%;
+  bottom: 0px;
+  position: relative;
+  border-top: 3px solid #252525;
+  margin-top: 25px;
+  padding-top: 15px;
+  font-size: 11px;
+`;

@@ -1,5 +1,15 @@
-// 에러핸들링 하기위해 Input 컴포넌트 커스텀
 import styled from "styled-components";
+
+const InputField = ({ error, errorMessage, ...rest }) => {
+  return (
+    <InputWrapper>
+      <Input error={error} {...rest} />
+      {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
+    </InputWrapper>
+  );
+};
+
+export default InputField;
 
 const InputWrapper = styled.div`
   position: relative;
@@ -27,14 +37,3 @@ const ErrorMessage = styled.span`
   color: #f00;
   text-align: left;
 `;
-
-const InputField = ({ error, errorMessage, ...rest }) => {
-  return (
-    <InputWrapper>
-      <Input error={error} {...rest} />
-      {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
-    </InputWrapper>
-  );
-};
-
-export default InputField;

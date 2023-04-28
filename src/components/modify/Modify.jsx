@@ -56,7 +56,7 @@ function Modify() {
         setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img)
       })
       .catch((error) => {
-        
+
         console.log(error)
         navigate("/roomlist")
       })
@@ -235,7 +235,7 @@ function Modify() {
       })
       .then((res) => {
         if (res.success === true) {
-          if(window.confirm("입력하신 새로운 비밀번호로 변경하시겠습니까?")){
+          if (window.confirm("입력하신 새로운 비밀번호로 변경하시겠습니까?")) {
             alert("비밀번호가 정상적으로 변경되었습니다.")
             navigate("/mypage")
           }
