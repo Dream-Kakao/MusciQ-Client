@@ -56,6 +56,7 @@ function Modify() {
         setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img)
       })
       .catch((error) => {
+        
         console.log(error)
         navigate("/roomlist")
       })
@@ -117,16 +118,19 @@ function Modify() {
                 return res.json()
               })
               .then((res) => {
-                alert("회원정보가 정상적으로 변경되었습니다.")
+                alert(`${res.data.nickname}님, 회원정보가 정상적으로 변경되었습니다.`)
+                navigate("/mypage")
               })
               .catch((err) => {
                 console.log(err)
                 alert("현재 닉네임 변경이 불가능합니다, 죄송합니다.")
+                navigate("/")
               })
           })
           .catch((err) => {
             console.log(err)
             alert("현재 이미지 업로드가 불가능합니다, 죄송합니다.")
+            navigate("/")
           })
       } else {
 
@@ -152,11 +156,13 @@ function Modify() {
             return res.json()
           })
           .then((res) => {
-            alert("회원정보가 정상적으로 변경되었습니다.")
+            alert(`${res.data.nickname}님, 회원정보가 정상적으로 변경되었습니다.`)
+            navigate("/mypage")
           })
           .catch((err) => {
             console.log(err)
             alert("현재 닉네임 변경이 불가능합니다, 죄송합니다.")
+            navigate("/")
           })
       }
     }
@@ -229,8 +235,10 @@ function Modify() {
       })
       .then((res) => {
         if (res.success === true) {
-          alert("비밀번호가 정상적으로 변경되었습니다.")
-          window.location.replace("/modify")
+          if(window.confirm("입력하신 새로운 비밀번호로 변경하시겠습니까?")){
+            alert("비밀번호가 정상적으로 변경되었습니다.")
+            navigate("/mypage")
+          }
         } else {
           if (res.error === 'NOT_EQUALS_INPUT_CURRENT_PW') {
             alert("현재 비밀번호가 일치하지 않습니다.")
@@ -238,12 +246,14 @@ function Modify() {
             alert("변경할 비밀번호 확인이 잘못되었습니다, 다시 한번 확인해 주세요.")
           } else {
             alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+            navigate("/")
           }
         }
       })
       .catch((err) => {
         console.log(err)
         alert("현재 비밀번호 변경이 불가능합니다, 죄송합니다.")
+        navigate("/")
       })
   }
 
@@ -403,7 +413,6 @@ const ModifyButton1 = styled.button`
   color: #6930c3;
   border: none;
   border-radius: 5px;
-  font-size: 20px;
 
   &:hover {
     background-color: #80ffdb;
@@ -419,7 +428,6 @@ const ModifyButton2 = styled.button`
   color: #6930c3;
   border: none;
   border-radius: 5px;
-  font-size: 20px;
 
   &:hover {
     background-color: #80ffdb;
@@ -434,5 +442,4 @@ const UnregisterButton = styled.button`
   color: #fff;
   border: 3px solid #64dfdf;
   border-radius: 5px;
-  font-size: 20px;
 `;

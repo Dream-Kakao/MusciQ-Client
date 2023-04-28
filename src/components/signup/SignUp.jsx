@@ -179,8 +179,9 @@ function SignUp() {
                 setEmailError(true);
                 alert("현재 이메일 인증이 원할하지 못해 회원가입이 불가능합니다, 죄송합니다.")
               }
+              // 이메일 전송이 성공적일 때
               setAuthCode(jsonRes.data)
-
+              alert("입력한 이메일로 인증코드 6자리를 전송했습니다, 확인하시고 3분안에 입력해주세요.")
             })
             .catch((err) => {
               console.log(err);
@@ -197,7 +198,6 @@ function SignUp() {
 
   // 이메일 인증 코드 비교 검사
   const checkEmailAuth = (emailAuth) => {
-    console.log(authCode)
     if (authCode != null && emailAuth === authCode) {
       setEmailAuthError(false)
       setEmailAuthOkMessage("인증완료 😆");
@@ -314,7 +314,12 @@ function SignUp() {
   // 데이터 들고 서버에 post 요청
   const handleDataPost = async (data) => {
     const { id, email, nickname, password } = data;
-    const postData = { id, email, nickname, password };
+    const postData = { 
+      id: id,
+      email: email,
+      nickname: nickname,
+      password: password
+    };
 
     await axios
       .post(`${process.env.REACT_APP_API_URL_V1}members/member`, postData, {
