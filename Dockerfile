@@ -1,26 +1,20 @@
 #FROM node:18.16.0 AS build
 FROM node:16-alpine AS build
 
-# Set working directory
+# 경로 설정하기
 WORKDIR /app
 
-# Copy all files from current directory to working dir in image
+# package.json 워킹 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
+COPY package.json .
+
+# image layer 에 의존성을 설치
+RUN yarn install
+
+# 현재 디렉토리의 모든 파일을 도커 컨테이너의 워킹 디렉토리에 복사
 COPY . .
 
-# install node modules and build assets
-RUN yarn install && yarn build
+# 3000번 포트 노출
+EXPOSE 3000
 
-# nginx state for serving content
-FROM nginx:alpine
-
-# Set working directory to nginx asset directory
-WORKDIR /usr/share/nginx/html
-
-# Remove default nginx static assets
-RUN rm -rf ./*
-
-# Copy static assets from builder stage
-COPY --from=build /app/build .
-
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# build 폴더를 serve합니다.
+CMD ["yarn", "start"]

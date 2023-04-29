@@ -3,6 +3,7 @@ import RoomList from "./RoomList";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateRoomModal from "./CreateRoomModal";
+import axios from "axios";
 
 const RoomListContainer = () => {
   const navigate = useNavigate();
@@ -14,31 +15,56 @@ const RoomListContainer = () => {
   const [curPage, setCurPage] = useState(page);
   const [previous, setPrevious] = useState();
 
+  // useEffect(() => {
+  //   const eventSource = new EventSource(
+  //     `${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`,
+  //     {
+  //       withCredentials: true,
+  //     }
+  //   );
+  //   eventSource.onmessage = (event) => {
+  //     const res = JSON.parse(event.data);
+
+  //     if (res.statusCode === "OK") {
+  //       setRooms(res.body.data);
+  //       setNext(res.body.next);
+  //       setCurPage(res.body.number);
+  //       setPrevious(res.body.previous);
+  //     } else {
+  //       // 교통사고 처리해야됨
+  //       console.error(`Error: ${event.status}`);
+  //     }
+  //   };
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, [page]);
+
   useEffect(() => {
-    const eventSource = new EventSource(
-      `${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`,
-      {
+    axios
+      .get(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`, {
         withCredentials: true,
-      }
-    );
-    eventSource.onmessage = (event) => {
-      const res = JSON.parse(event.data);
+      })
+      .then((response) => {
+        console.log(response.data);
+        const res = response.data;
+        console.log(res);
+        // if (res.statusCode === 200) {
+        setRooms(res.data);
+        setNext(res.next);
+        setCurPage(res.number);
+        setPrevious(res.previous);
 
-      if (res.statusCode === "OK") {
-        setRooms(res.body.data);
-        setNext(res.body.next);
-        setCurPage(res.body.number);
-        setPrevious(res.body.previous);
-      } else {
-        // 교통사고 처리해야됨
-        console.error(`Error: ${event.status}`);
-      }
-    };
-    return () => {
-      eventSource.close();
-    };
+        // } else {
+        //   // 교통사고 처리해야됨
+        //   console.error(`Error: ${response.status}`);
+        // }
+      })
+      .catch((error) => {
+        console.error(`Error: ${error}`);
+      });
   }, [page]);
-
+  console.log(next);
   // 로그아웃 버튼 클릭 이벤트
   const onClickLogout = () => {
     fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
@@ -51,8 +77,8 @@ const RoomListContainer = () => {
         if (success) {
           sessionStorage.removeItem("Auth");
           sessionStorage.removeItem("AuthExpiration");
-          sessionStorage.removeItem("UserID")
-          sessionStorage.removeItem("UserNickname")
+          sessionStorage.removeItem("UserID");
+          sessionStorage.removeItem("UserNickname");
           alert("로그 아웃 성공!");
           navigate("/");
         }
@@ -66,8 +92,8 @@ const RoomListContainer = () => {
 
   // 마이페이지 이동 버튼
   const onClickMypage = () => {
-    navigate("/mypage")
-  }
+    navigate("/mypage");
+  };
 
   // 다음 페이지 버튼 클릭 이벤트
   const onClickNext = async (next) => {

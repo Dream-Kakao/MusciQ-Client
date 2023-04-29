@@ -17,7 +17,6 @@ const Login = () => {
         if (res.success) {
           const now = new Date();
               const expirationDate = new Date(now.getTime() + 86400000);
-              console.log(res)
               sessionStorage.setItem("UserID", res.data.UserID)
               sessionStorage.setItem("Auth", res.data.AccessToken)
               sessionStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
