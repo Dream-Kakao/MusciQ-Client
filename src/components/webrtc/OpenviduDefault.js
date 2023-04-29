@@ -13,7 +13,7 @@ import GameResultDialog from "./GameResultDialog";
 import CountdownSound1 from "../../assets/music/CountdownSound1.mp3";
 
 const APPLICATION_SERVER_URL =
-  process.env.NODE_ENV === "production" ? "" : "https://drkko.site/api/v1/";
+   process.env.NODE_ENV === "production" ? "" : "https://drkko.site/api/v1/";
 
 // !logic
 class OpenviduDefault extends Component {
@@ -23,9 +23,9 @@ class OpenviduDefault extends Component {
 
     // These properties are in the state's component in order to re-render the HTML whenever their values change
     this.state = {
-      mySessionId: localStorage.getItem("sessionID") || "Session0",
+      mySessionId: sessionStorage.getItem("sessionID") || "Session0",
       myUserName:
-        localStorage.getItem("UserNickName") ||
+      sessionStorage.getItem("UserNickName") ||
         "참가자" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
@@ -238,7 +238,7 @@ class OpenviduDefault extends Component {
 
     const mySession = this.state.session;
     const subscribers = this.state.subscribers;
-    const mySessionId = localStorage.getItem("sessionID");
+    const mySessionId = sessionStorage.getItem("sessionID");
     const synthesis = this.state.synthesis;
 
     // 가사 정지
@@ -261,12 +261,12 @@ class OpenviduDefault extends Component {
       session: undefined,
       subscribers: [],
       mySessionId: "Session0",
-      myUserName: localStorage.getItem("UserNickName"),
+      myUserName: sessionStorage.getItem("UserNickName"),
       mainStreamManager: undefined,
       publisher: undefined,
     });
 
-    localStorage.removeItem("sessionID");
+    sessionStorage.removeItem("sessionID");
     window.location.replace("roomlist");
   }
 
@@ -462,7 +462,7 @@ class OpenviduDefault extends Component {
     }));
 
     console.log(myUserName);
-    console.log(localStorage.getItem("myUserName"));
+    console.log(sessionStorage.getItem("myUserName"));
 
     return (
       // join session 하는 페이지. 추 후에 지워야 됨.

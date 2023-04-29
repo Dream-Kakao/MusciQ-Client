@@ -9,15 +9,15 @@ import InputWithButton from "./InputWithButton";
 // !logic
 function SignUp() {
   useEffect(() => {
-    const expiration = localStorage.getItem("AuthExpiration");
+    const expiration = sessionStorage.getItem("AuthExpiration");
     const currentTime = new Date().getTime();
 
     // Access Token이 만료 됐다면
     if (expiration && currentTime > parseInt("AuthExpiration")) {
-      localStorage.removeItem("Auth"); // Access Token 제거
-      localStorage.removeItem("AuthExpiration");
+      sessionStorage.removeItem("Auth"); // Access Token 제거
+      sessionStorage.removeItem("AuthExpiration");
     }
-    const accessToken = localStorage.getItem("Auth")
+    const accessToken = sessionStorage.getItem("Auth")
     if (accessToken != null) {
       window.location.replace("/login")
     }

@@ -62,7 +62,7 @@ export default function FormDialog() {
         { withCredentials: true }
       );
 
-      localStorage.setItem("sessionID", sessionId);
+      sessionStorage.setItem("sessionID", sessionId);
       setOpen(false);
       navigate("/openvidu");
     } catch (error) {

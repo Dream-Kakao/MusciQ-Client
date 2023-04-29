@@ -15,13 +15,36 @@ const Login = () => {
       })
       .then((res) => {
         if (res.success) {
-          navigate("/roomlist")
+          const now = new Date();
+              const expirationDate = new Date(now.getTime() + 86400000);
+              console.log(res)
+              sessionStorage.setItem("UserID", res.data.UserID)
+              sessionStorage.setItem("Auth", res.data.AccessToken)
+              sessionStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
+              
+              const url = `${process.env.REACT_APP_API_URL_V1}members/member/${sessionStorage.getItem("UserID")}`
+              fetch(url, {
+                method: "GET",
+                credentials: 'include'
+              })
+              .then((res) => {
+                return res.json();
+              })
+              .then((res) => {
+                sessionStorage.setItem("UserNickName", res.data.nickname)
+              })
+              .catch((err) => {
+                console.log(err)
+                window.reload()
+              })
+
+              navigate('/roomlist')
         } else {
           console.log(res.error)
-          localStorage.removeItem("Auth")
-          localStorage.removeItem("AuthExpiration")
-          localStorage.removeItem("UserID")
-          localStorage.removeItem("UserNickName")
+          sessionStorage.removeItem("Auth")
+          sessionStorage.removeItem("AuthExpiration")
+          sessionStorage.removeItem("UserID")
+          sessionStorage.removeItem("UserNickName")
         }
       })
       .catch(error => {
@@ -69,11 +92,11 @@ const Login = () => {
             if (res.success) {
               const now = new Date();
               const expirationDate = new Date(now.getTime() + 86400000);
-              localStorage.setItem("UserID", inputId)
-              localStorage.setItem("Auth", res.data)
-              localStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
+              sessionStorage.setItem("UserID", inputId)
+              sessionStorage.setItem("Auth", res.data)
+              sessionStorage.setItem('AuthExpiration', expirationDate.getTime().toString());
               
-              const url = `${process.env.REACT_APP_API_URL_V1}members/member/${localStorage.getItem("UserID")}`
+              const url = `${process.env.REACT_APP_API_URL_V1}members/member/${sessionStorage.getItem("UserID")}`
               fetch(url, {
                 method: "GET",
                 credentials: 'include'
@@ -82,7 +105,7 @@ const Login = () => {
                 return res.json();
               })
               .then((res) => {
-                localStorage.setItem("UserNickName", res.data.nickname)
+                sessionStorage.setItem("UserNickName", res.data.nickname)
               })
               .catch((err) => {
                 console.log(err)

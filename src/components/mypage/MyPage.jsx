@@ -10,7 +10,7 @@ function MyPage() {
   const [imageFile, setImageFile] = useState();
 
   useEffect(() => {
-    const userId = localStorage.getItem("UserID");
+    const userId = sessionStorage.getItem("UserID");
     const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
 
     fetch(url, {

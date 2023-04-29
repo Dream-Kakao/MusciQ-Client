@@ -32,7 +32,7 @@ function Modify() {
   const [chkNewPassword, setNewChkPassword] = useState();
 
   useEffect(() => {
-    const userId = localStorage.getItem("UserID")
+    const userId = sessionStorage.getItem("UserID")
     const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`
     fetch(url, {
       method: 'GET',
@@ -97,7 +97,7 @@ function Modify() {
             return res.json()
           })
           .then((res) => {
-            const userId = localStorage.getItem("UserID");
+            const userId = sessionStorage.getItem("UserID");
             const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
             fetch(url, {
               method: 'PUT',
@@ -135,7 +135,7 @@ function Modify() {
       } else {
 
         // 이미지가 없는 경우 
-        const userId = localStorage.getItem("UserID");
+        const userId = sessionStorage.getItem("UserID");
         const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
         fetch(url, {
           method: 'PUT',
@@ -216,7 +216,7 @@ function Modify() {
       return;
     }
 
-    const userId = localStorage.getItem("UserID");
+    const userId = sessionStorage.getItem("UserID");
     const url = `${process.env.REACT_APP_API_URL_V1}members/password/${userId}`;
     fetch(url, {
       method: 'PUT',
@@ -259,7 +259,7 @@ function Modify() {
 
   const onClickWithdrawal = () => {
     if (window.confirm("정말로 탈퇴하시겠습니까?")) {
-      const userId = localStorage.getItem("UserID");
+      const userId = sessionStorage.getItem("UserID");
       const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
 
       fetch(url, {
@@ -281,8 +281,8 @@ function Modify() {
             .then((data) => {
               const success = data.success;
               if (success) {
-                localStorage.removeItem("Auth");
-                localStorage.removeItem("AuthExpiration");
+                sessionStorage.removeItem("Auth");
+                sessionStorage.removeItem("AuthExpiration");
                 alert("정상적으로 회원 정보가 삭제 되었습니다.");
                 navigate("/login");
               }

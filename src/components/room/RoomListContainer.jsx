@@ -49,10 +49,10 @@ const RoomListContainer = () => {
       .then((data) => {
         const success = data.success;
         if (success) {
-          localStorage.removeItem("Auth");
-          localStorage.removeItem("AuthExpiration");
-          localStorage.removeItem("UserID")
-          localStorage.removeItem("UserNickname")
+          sessionStorage.removeItem("Auth");
+          sessionStorage.removeItem("AuthExpiration");
+          sessionStorage.removeItem("UserID")
+          sessionStorage.removeItem("UserNickname")
           alert("로그 아웃 성공!");
           navigate("/");
         }

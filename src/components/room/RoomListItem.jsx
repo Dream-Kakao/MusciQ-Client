@@ -7,7 +7,7 @@ const RoomListItem = (props) => {
 
   // 방 입장 메서드
   const onClickRoom = (roomId) => {
-    localStorage.setItem("sessionID", roomId);
+    sessionStorage.setItem("sessionID", roomId);
     navigate("/openvidu");
   };
 
