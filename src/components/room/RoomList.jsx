@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import RoomListItem from './RoomListItem';
+import styled from "styled-components";
+import RoomListItem from "./RoomListItem";
 
 const RoomList = (props) => {
   const rooms = [];
@@ -7,14 +7,17 @@ const RoomList = (props) => {
   for (let i = 0; i < props.rooms.length; i++) {
     const { roomId, gameName, roomTitle } = props.rooms[i];
     rooms.push(
-      <RoomListItem key={i} roomId={roomId} gameName={gameName} roomTitle={roomTitle} /> // 변경된 코드
+      <RoomListItem
+        key={i}
+        roomId={roomId}
+        gameName={gameName}
+        roomTitle={roomTitle}
+      /> // 변경된 코드
     );
   }
 
   return (
-    <RoomListContainer id="room-list-container">
-      {rooms}
-    </RoomListContainer>
+    <RoomListContainer id="room-list-container">{rooms}</RoomListContainer>
   );
 };
 
@@ -28,5 +31,5 @@ const RoomListContainer = styled.div`
   padding: 50px;
   width: 100%;
   height: 100%;
-  border: 4px solid #6930C3; /* border 속성 추가 */
+  border: 4px solid #6930c3; /* border 속성 추가 */
 `;

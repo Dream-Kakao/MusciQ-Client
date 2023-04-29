@@ -25,8 +25,8 @@ class OpenviduDefault extends Component {
     this.state = {
       mySessionId: localStorage.getItem("sessionID") || "Session0",
       myUserName:
-        localStorage.getItem("userID") ||
-        "Participant" + Math.floor(Math.random() * 100),
+        localStorage.getItem("UserNickName") ||
+        "참가자" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined, // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
       publisher: undefined,
@@ -261,7 +261,7 @@ class OpenviduDefault extends Component {
       session: undefined,
       subscribers: [],
       mySessionId: "Session0",
-      myUserName: localStorage.getItem("UserID"),
+      myUserName: localStorage.getItem("UserNickName"),
       mainStreamManager: undefined,
       publisher: undefined,
     });
@@ -460,6 +460,9 @@ class OpenviduDefault extends Component {
         videoId: music.videoId,
       }),
     }));
+
+    console.log(myUserName);
+    console.log(localStorage.getItem("myUserName"));
 
     return (
       // join session 하는 페이지. 추 후에 지워야 됨.
