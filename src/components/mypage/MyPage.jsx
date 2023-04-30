@@ -14,19 +14,23 @@ function MyPage() {
     const url = `${process.env.REACT_APP_API_URL_V1}members/member/${userId}`;
 
     fetch(url, {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
     })
       .then((res) => {
         return res.json();
       })
       .then((res) => {
         setUser(res.data);
-        setImageFile(res.data.profile_img.path + res.data.profile_img.uuid + res.data.profile_img.profile_img);
+        setImageFile(
+          res.data.profile_img.path +
+            res.data.profile_img.uuid +
+            res.data.profile_img.profile_img
+        );
       })
       .catch((error) => {
         console.log(error);
-      })
+      });
   }, []);
 
   const onClickModify = () => {
@@ -38,7 +42,7 @@ function MyPage() {
       <MyPageContainer>
         <Wrapper>
           <ProfileImage src={imageFile} alt="Profile Picture" />
-          <Record>🎉{user.games_count}전 {user.win_count}승🎉</Record>
+          {/* <Record>🎉{user.games_count}전 {user.win_count}승🎉</Record> */}
         </Wrapper>
 
         <InfoWrapper>
