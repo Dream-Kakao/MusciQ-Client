@@ -41,31 +41,28 @@ const RoomListContainer = () => {
   // }, [page]);
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response.data);
-        const res = response.data;
-        console.log(res);
-        // if (res.statusCode === 200) {
-        setRooms(res.data);
-        setNext(res.next);
-        setCurPage(res.number);
-        setPrevious(res.previous);
+    const intervalId = setInterval(() => {
+      axios
+        .get(`${process.env.REACT_APP_API_URL_V1}rooms/all?page=${page}`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          const res = response.data;
 
-        // } else {
-        //   // 교통사고 처리해야됨
-        //   console.error(`Error: ${response.status}`);
-        // }
-      })
-      .catch((error) => {
-        console.error(`Error: ${error}`);
-      });
-  }, [page]);
-  console.log(next);
-  // 로그아웃 버튼 클릭 이벤트
+          setRooms(res.data);
+          setNext(res.next);
+          setCurPage(res.number);
+          setPrevious(res.previous);
+        })
+        .catch((error) => {
+          console.error(`Error: ${error}`);
+        });
+    }, 1000); // 1초마다 요청
+  
+    return () => clearInterval(intervalId); // 컴포넌트가 언마운트될 때 clearInterval 함수를 호출하여 setInterval 함수를 중지시킵니다.
+  }, [page]); // page가 변경될 때마다 실행
+
+  
   const onClickLogout = () => {
     fetch(`${process.env.REACT_APP_API_URL_V1}members/logout`, {
       method: "GET",
